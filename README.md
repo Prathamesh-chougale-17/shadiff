@@ -1,5 +1,10 @@
 # Shadiff - ShadCN Registry Generator
 
+[![npm version](https://badge.fury.io/js/shadiff.svg)](https://badge.fury.io/js/shadiff)
+[![Downloads](https://img.shields.io/npm/dm/shadiff.svg)](https://www.npmjs.com/package/shadiff)
+[![GitHub issues](https://img.shields.io/github/issues/Prathamesh-Chougale-17/shadiff.svg)](https://github.com/Prathamesh-Chougale-17/shadiff/issues)
+[![GitHub stars](https://img.shields.io/github/stars/Prathamesh-Chougale-17/shadiff.svg)](https://github.com/Prathamesh-Chougale-17/shadiff/stargazers)
+
 🚀 A powerful CLI tool to automatically generate shadcn/ui registry JSON files for your projects with intelligent component detection and clean, maintainable architecture.
 
 ## 🚀 Quick Start
