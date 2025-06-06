@@ -1,8 +1,9 @@
-# 🎉 Shadiff Project - Integration Complete!
+# 🎉 Shadiff Project - Integration Complete
 
 ## ✅ Successfully Completed Tasks
 
 ### 1. **GitHub Actions Workflows Fixed** ✅
+
 - Fixed YAML formatting issues in `.github/workflows/ci.yml`
 - CI workflow now properly runs on Node.js versions 16, 18, 20
 - All workflow steps pass successfully:
@@ -12,6 +13,7 @@
   - ✅ CLI help check works correctly
 
 ### 2. **Package Version Management** ✅
+
 - **Current Version**: 1.0.2
 - Git tags created: `v1.0.1`, `v1.0.2`
 - Version consistency across all files:
@@ -20,12 +22,14 @@
   - CHANGELOG.md: Updated with all versions
 
 ### 3. **Repository Integration** ✅
+
 - GitHub repository properly linked to npm package
 - All documentation updated with correct package name (`shadiff`)
 - README.md includes proper installation and usage instructions
 - Repository URLs correctly configured in package.json
 
 ### 4. **Code Quality Assurance** ✅
+
 - All tests passing (4/4 test suites successful)
 - TypeScript compilation with zero errors
 - CLI commands working correctly
@@ -34,6 +38,7 @@
 ## 🔧 Manual Steps Required
 
 ### Step 1: Publish to NPM
+
 ```bash
 # Log in to npm (if not already logged in)
 npm login
@@ -46,13 +51,15 @@ npm publish
 ```
 
 ### Step 2: Create GitHub Releases
-1. Go to: https://github.com/Prathamesh-Chougale-17/shadiff/releases
+
+1. Go to: <https://github.com/Prathamesh-Chougale-17/shadiff/releases>
 2. Click "Create a new release"
 3. Create releases for:
    - **v1.0.1**: "Initial npm package release with bin command updates"
    - **v1.0.2**: "GitHub Actions fixes and documentation improvements"
 
 ### Step 3: Set up NPM_TOKEN (Optional - for automated publishing)
+
 1. Generate npm token: `npm token create --access=public`
 2. Add to GitHub Secrets:
    - Go to: Repository Settings → Secrets and variables → Actions
@@ -73,11 +80,13 @@ npm publish
 ## 🚀 Package Usage
 
 ### Installation
+
 ```bash
 npm install -g shadiff
 ```
 
 ### CLI Commands
+
 ```bash
 # Generate registry
 shadiff generate
