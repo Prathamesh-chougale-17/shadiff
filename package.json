@@ -29,13 +29,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Prathamesh-Chougale-17/shadiff.git"
+    "url": "https://github.com/Prathamesh-Chougale-17/shadiff.git"
   },
   "bugs": {
     "url": "https://github.com/Prathamesh-Chougale-17/shadiff/issues"
   },
-  "homepage": "https://github.com/Prathamesh-Chougale-17/shadiff#readme",
-  "dependencies": {
+  "homepage": "https://github.com/Prathamesh-Chougale-17/shadiff#readme",  "dependencies": {
     "commander": "^11.1.0"
   },
   "devDependencies": {
