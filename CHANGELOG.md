@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.2] - 2025-06-07
 
+### Fixed
+
+- Resolved YAML formatting issues in GitHub Actions workflows
+- Fixed CI/CD pipeline to properly run tests and builds
+- Improved automated publishing workflow configuration
+
 ### Changed
 
 - Updated README.md with correct package name `shadiff` instead of `shadcn-registry-cli`
