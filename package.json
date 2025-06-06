@@ -1,0 +1,50 @@
+{
+  "name": "shadiff",
+  "version": "1.0.1",
+  "description": "Generate shadcn/ui registry JSON for your project",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "shadiff": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "build:clean": "rimraf dist && npm run build",
+    "dev": "ts-node src/index.ts",
+    "start": "node dist/index.js",
+    "test": "node test/simple-test.js",
+    "test:all": "npm run build && npm run test && npm run example",
+    "lint": "echo \"Linting coming soon...\"",
+    "example": "node examples/usage.js",
+    "prepublishOnly": "npm run build:clean"
+  },
+  "keywords": [
+    "shadcn",
+    "registry",
+    "cli",
+    "typescript",
+    "components"
+  ],
+  "author": "Prathamesh Chougale <prathamesh17170@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Prathamesh-Chougale-17/shadiff.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Prathamesh-Chougale-17/shadiff/issues"
+  },
+  "homepage": "https://github.com/Prathamesh-Chougale-17/shadiff#readme",
+  "dependencies": {
+    "commander": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.0",
+    "rimraf": "^5.0.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

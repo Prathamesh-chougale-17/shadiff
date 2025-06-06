@@ -2,6 +2,20 @@
 
 🚀 A powerful CLI tool to automatically generate shadcn/ui registry JSON files for your projects with intelligent component detection and clean, maintainable architecture.
 
+## 🚀 Quick Start
+
+```bash
+# Install globally
+npm install -g shadiff
+
+# Generate registry for your project
+cd your-project
+shadiff generate
+
+# Or initialize with config
+shadiff init
+```
+
 ## ✨ Features
 
 - **🔍 Automatic Component Detection** - Scans your project and automatically detects shadcn/ui components  
@@ -33,21 +47,21 @@ For detailed architecture documentation, see [ARCHITECTURE.md](./ARCHITECTURE.md
 ### Global Installation (Recommended)
 
 ```bash
-npm install -g shadcn-registry-cli
+npm install -g shadiff
 # or
-yarn global add shadcn-registry-cli
+yarn global add shadiff
 # or  
-pnpm add -g shadcn-registry-cli
+pnpm add -g shadiff
 ```
 
 ### Local Installation
 
 ```bash
-npm install --save-dev shadcn-registry-cli
+npm install --save-dev shadiff
 # or
-yarn add --dev shadcn-registry-cli
+yarn add --dev shadiff
 # or
-pnpm add --save-dev shadcn-registry-cli
+pnpm add --save-dev shadiff
 ```
 
 ## Usage
@@ -57,7 +71,7 @@ pnpm add --save-dev shadcn-registry-cli
 Navigate to your project root and run:
 
 ```bash
-shadcn-registry
+shadiff generate
 ```
 
 This will generate a `registry.json` file with all your project components.
@@ -68,16 +82,16 @@ This will generate a `registry.json` file with all your project components.
 
 ```bash
 # Generate with default settings
-shadcn-registry generate
+shadiff generate
 
 # Custom options
-shadcn-registry generate --root-dir ./src --output my-registry.json --author "Your Name"
+shadiff generate --root-dir ./src --output my-registry.json --author "Your Name"
 ```
 
 #### Initialize Configuration
 
 ```bash
-shadcn-registry init
+shadiff init
 ```
 
 Creates a `shadcn-registry.config.json` file for custom configuration.
@@ -167,7 +181,7 @@ Quickly generate a registry when moving components between projects:
 
 ```bash
 cd my-shadcn-project
-shadcn-registry generate --output migration-registry.json
+shadiff generate --output migration-registry.json
 ```
 
 ### 👥 Team Collaboration  
@@ -175,7 +189,7 @@ shadcn-registry generate --output migration-registry.json
 Share your component library with team members:
 
 ```bash
-shadcn-registry generate --author "Design System Team"
+shadiff generate --author "Design System Team"
 ```
 
 ### 📦 Component Library Distribution
@@ -183,7 +197,7 @@ shadcn-registry generate --author "Design System Team"
 Create registries for publishing component libraries:
 
 ```bash
-shadcn-registry generate --output dist/registry.json
+shadiff generate --output dist/registry.json
 ```
 
 ## API Reference
@@ -220,6 +234,11 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 MIT License - see LICENSE file for details.
 
 ## Changelog
+
+### v1.0.1
+
+- Updated CLI bin command to `shadiff` for better usability
+- Improved package naming consistency
 
 ### v1.0.0
 
