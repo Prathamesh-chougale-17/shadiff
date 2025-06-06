@@ -34,7 +34,8 @@
   "bugs": {
     "url": "https://github.com/Prathamesh-Chougale-17/shadiff/issues"
   },
-  "homepage": "https://github.com/Prathamesh-Chougale-17/shadiff#readme",  "dependencies": {
+  "homepage": "https://github.com/Prathamesh-Chougale-17/shadiff#readme",
+  "dependencies": {
     "commander": "^11.1.0"
   },
   "devDependencies": {
