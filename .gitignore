@@ -1,7 +1,13 @@
 node_modules
-package-lock.json
 dist
-*.json
 
+# Generated registry files
+registry.json
+test-*.json
+my-registry.json
+advanced-registry.json
+
+# Keep important config files
 !package.json
 !package-lock.json
+!tsconfig.json
