@@ -7,7 +7,6 @@
 
 import { ShadcnProjectRegistryGenerator } from '../dist/index.js';
 import fs from 'fs';
-import path from 'path';
 
 console.log('🧪 Running Shadiff Tests...\n');
 

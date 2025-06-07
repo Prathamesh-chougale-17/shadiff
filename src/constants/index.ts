@@ -45,7 +45,6 @@ export const SHADCN_COMPONENTS = [
   "table",
   "tabs",
   "textarea",
-  "toast",
   "toggle",
   "toggle-group",
   "tooltip",

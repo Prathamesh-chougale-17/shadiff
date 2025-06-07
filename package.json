@@ -19,7 +19,8 @@
     "test:all": "npm run build && npm run test && npm run example",
     "lint": "echo \"Linting coming soon...\"",
     "example": "node examples/usage.js",
-    "prepublishOnly": "npm run build:clean"
+    "prepublishOnly": "npm run build:clean",
+    "publish": "npm publish --access public"
   },
   "keywords": [
     "shadcn",
