@@ -5,7 +5,7 @@ import { ShadcnProjectRegistryGenerator } from '../dist/index.js';
 const viteConfig = {
   rootDir: './src',
   outputFile: 'vite-registry.json',
-  includePatterns: ['.tsx', '.ts', '.jsx', '.js', '.css'],
+  includePatterns: ['.tsx', '.ts', '.jsx', '.js', '.css', '.svg'],
   excludePatterns: [
     'node_modules',
     '.git',

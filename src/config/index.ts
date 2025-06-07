@@ -19,7 +19,7 @@ export function createDefaultConfig(): void {
   const config: ShadcnProjectRegistryOptions & { [key: string]: any } = {
     rootDir: ".",
     outputFile: "registry.json",
-    includePatterns: [".tsx", ".ts", ".jsx", ".js", ".css"],
+    includePatterns: [".tsx", ".ts", ".jsx", ".js", ".css", ".svg"],
     excludePatterns: [
       "node_modules",
       ".git",

@@ -15,7 +15,7 @@ generator.run();
 const advancedGenerator = new ShadcnProjectRegistryGenerator({
   rootDir: './src',
   outputFile: 'advanced-registry.json',
-  includePatterns: ['.tsx', '.ts', '.jsx', '.js', '.vue'],
+  includePatterns: ['.tsx', '.ts', '.jsx', '.js', '.vue', '.svg'],
   excludePatterns: [
     'node_modules',
     '.git',

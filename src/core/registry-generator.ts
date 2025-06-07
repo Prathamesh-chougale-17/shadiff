@@ -30,6 +30,7 @@ export class ShadcnProjectRegistryGenerator {
         ".jsx",
         ".js",
         ".css",
+        ".svg",
       ],
       excludePatterns: options.excludePatterns || [
         "node_modules",
