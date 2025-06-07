@@ -3,8 +3,7 @@
   "version": "1.0.6",
   "description": "Generate shadcn/ui registry JSON for your project",
   "type": "module",
-  "main": "dist/index.js",
-  "bin": {
+  "main": "dist/index.js",  "bin": {
     "shadiff": "dist/index.js"
   },
   "publishConfig": {
