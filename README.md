@@ -7,12 +7,76 @@
 
 🚀 A powerful CLI tool to automatically generate shadcn/ui registry JSON files for your projects with intelligent component detection and clean, maintainable architecture.
 
+## 🔥 Multiple Ways to Use
+
+### 1. **npx** (Recommended - Always Latest)
+
+```bash
+npx shadiff@latest generate
+```
+
+### 2. **Global Installation**
+
+```bash
+npm install -g shadiff
+shadiff generate
+```
+
+### 3. **Local Dev Dependency**
+
+```bash
+npm install --save-dev shadiff
+npx shadiff generate
+```
+
+### 4. **Package Scripts**
+
+Add to your `package.json`:
+
+```json
+{
+  "scripts": {
+    "generate-registry": "shadiff generate",
+    "init-registry": "shadiff init"
+  }
+}
+```
+
+Then run: `npm run generate-registry`
+
 ## 🚀 Quick Start
+
+### Using npx (No Installation Required)
+
+```bash
+# Generate registry instantly with the latest version
+npx shadiff@latest generate
+
+# Initialize config with latest version
+npx shadiff@latest init
+
+# Generate with custom options
+npx shadiff@latest generate --root-dir ./src --output my-registry.json --author "Your Name"
+```
+
+### Global Installation
 
 ```bash
 # Install globally
 npm install -g shadiff
+```
 
+```bash
+# or
+yarn global add shadiff
+```
+
+```bash
+# or  
+pnpm add -g shadiff
+```
+
+```bash
 # Generate registry for your project
 cd your-project
 shadiff generate
@@ -49,7 +113,17 @@ For detailed architecture documentation, see [ARCHITECTURE.md](./ARCHITECTURE.md
 
 ## 📋 Installation
 
-### Global Installation (Recommended)
+### Using npx (Recommended - No Installation Required)
+
+The easiest way to use shadiff is with npx, which always uses the latest version:
+
+```bash
+npx shadiff@latest generate
+```
+
+This approach ensures you're always using the latest features and bug fixes without needing to manage package versions.
+
+### Global Installation
 
 ```bash
 npm install -g shadiff
@@ -76,6 +150,10 @@ pnpm add --save-dev shadiff
 Navigate to your project root and run:
 
 ```bash
+# Using npx (recommended)
+npx shadiff@latest generate
+
+# Or if globally installed
 shadiff generate
 ```
 
@@ -86,16 +164,26 @@ This will generate a `registry.json` file with all your project components.
 #### Generate Registry
 
 ```bash
-# Generate with default settings
+# Using npx (latest version)
+npx shadiff@latest generate
+
+# Generate with default settings (global install)
 shadiff generate
 
-# Custom options
+# Custom options with npx
+npx shadiff@latest generate --root-dir ./src --output my-registry.json --author "Your Name"
+
+# Custom options (global install)
 shadiff generate --root-dir ./src --output my-registry.json --author "Your Name"
 ```
 
 #### Initialize Configuration
 
 ```bash
+# Using npx
+npx shadiff@latest init
+
+# Global install
 shadiff init
 ```
 
@@ -161,7 +249,7 @@ The CLI automatically detects these shadcn/ui components:
 - `navigation-menu`, `pagination`, `popover`, `progress`, `radio-group`
 - `resizable`, `scroll-area`, `select`, `separator`, `sheet`, `sidebar`
 - `skeleton`, `slider`, `sonner`, `switch`, `table`, `tabs`, `textarea`
-- `toast`, `toggle`, `toggle-group`, `tooltip`
+- `toggle`, `toggle-group`, `tooltip`
 
 ## Smart Dependency Filtering
 
@@ -185,6 +273,10 @@ The CLI automatically excludes common framework packages to keep your registry c
 Quickly generate a registry when moving components between projects:
 
 ```bash
+# Using npx
+npx shadiff@latest generate --output migration-registry.json
+
+# Or with global install
 cd my-shadcn-project
 shadiff generate --output migration-registry.json
 ```
@@ -194,6 +286,10 @@ shadiff generate --output migration-registry.json
 Share your component library with team members:
 
 ```bash
+# Using npx
+npx shadiff@latest generate --author "Design System Team"
+
+# Or with global install
 shadiff generate --author "Design System Team"
 ```
 
@@ -202,18 +298,63 @@ shadiff generate --author "Design System Team"
 Create registries for publishing component libraries:
 
 ```bash
+# Using npx
+npx shadiff@latest generate --output dist/registry.json
+
+# Or with global install
 shadiff generate --output dist/registry.json
 ```
 
 ## API Reference
 
+### All Available Commands
+
+```bash
+# Generate registry (main command)
+npx shadiff@latest generate [options]
+shadiff generate [options]
+
+# Initialize configuration file
+npx shadiff@latest init
+shadiff init
+
+# Show help
+npx shadiff@latest --help
+shadiff --help
+
+# Show version
+npx shadiff@latest --version
+shadiff --version
+```
+
 ### CLI Options
 
-| Option | Description | Default |
-|--------|-------------|---------|
-| `--root-dir, -r` | Root directory to scan | `process.cwd()` |
-| `--output, -o` | Output file path | `registry.json` |  
-| `--author, -a` | Author information | `Project Author` |
+| Option | Alias | Description | Default | Example |
+|--------|-------|-------------|---------|---------|
+| `--root-dir` | `-r` | Root directory to scan | `process.cwd()` | `--root-dir ./src` |
+| `--output` | `-o` | Output file path | `registry.json` | `--output my-registry.json` |
+| `--author` | `-a` | Author information | `Project Author` | `--author "John Doe"` |
+| `--help` | `-h` | Show help information | - | `--help` |
+| `--version` | `-v` | Show version | - | `--version` |
+
+### Command Examples
+
+```bash
+# Basic usage
+npx shadiff@latest generate
+
+# Custom output file
+npx shadiff@latest generate --output components-registry.json
+
+# Scan specific directory
+npx shadiff@latest generate --root-dir ./src/components
+
+# Set author information
+npx shadiff@latest generate --author "Design Team <design@company.com>"
+
+# Combine multiple options
+npx shadiff@latest generate --root-dir ./src --output ./dist/registry.json --author "Your Name"
+```
 
 ### File Categories
 
