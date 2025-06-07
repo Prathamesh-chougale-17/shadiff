@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.4] - 2025-06-07
+
+### Fixed
+
+- **CLI Output Option**: Fixed `-o, --output` option in `generate` command not working correctly
+- The `-o` option now properly generates the JSON file at the specified custom location
+- Improved CLI option mapping between command line arguments and generator options
+
+### Enhanced
+
+- **GitHub Packages Support**: Added publishing to GitHub Packages registry
+- Package now available on both npm and GitHub Packages
+- Created automated multi-registry publishing scripts
+- Added comprehensive GitHub Packages setup documentation
+
 ## [1.0.3] - 2025-06-07
 
 ### Added

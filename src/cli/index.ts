@@ -11,7 +11,7 @@ const program = new Command();
 program
   .name("shadiff")
   .description("Generate shadcn/ui registry JSON for your project")
-  .version("1.0.3");
+  .version("1.0.4");
 
 program
   .command("generate")
@@ -19,8 +19,14 @@ program
   .option("-r, --root-dir <dir>", "Root directory to scan", process.cwd())
   .option("-o, --output <file>", "Output file", "registry.json")
   .option("-a, --author <author>", "Author information", "Project Author")
-  .action((options: ShadcnProjectRegistryOptions) => {
-    const generator = new ShadcnProjectRegistryGenerator(options);
+  .action((options: any) => {
+    // Map CLI options to generator options
+    const generatorOptions: ShadcnProjectRegistryOptions = {
+      rootDir: options.rootDir,
+      outputFile: options.output, // Map 'output' to 'outputFile'
+      author: options.author,
+    };
+    const generator = new ShadcnProjectRegistryGenerator(generatorOptions);
     generator.run();
   });
 
