@@ -1,5 +1,5 @@
 {
-  "name": "@prathamesh-chougale-17/shadiff",
+  "name": "shadiff",
   "version": "1.0.6",
   "description": "Generate shadcn/ui registry JSON for your project",
   "type": "module",
@@ -8,7 +8,7 @@
     "shadiff": "dist/index.js"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
     "build": "tsc",
@@ -19,8 +19,7 @@
     "test:all": "npm run build && npm run test && npm run example",
     "lint": "echo \"Linting coming soon...\"",
     "example": "node examples/usage.js",
-    "prepublishOnly": "npm run build:clean",
-    "publish": "npm publish --access public"
+    "prepublishOnly": "npm run build:clean"
   },
   "keywords": [
     "shadcn",
@@ -31,10 +30,6 @@
   ],
   "author": "Prathamesh Chougale <prathamesh17170@gmail.com>",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Prathamesh-Chougale-17/shadiff.git"
-  },
   "bugs": {
     "url": "https://github.com/Prathamesh-Chougale-17/shadiff/issues"
   },
