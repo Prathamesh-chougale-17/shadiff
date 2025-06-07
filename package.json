@@ -1,11 +1,14 @@
 {
-  "name": "shadiff",
+  "name": "@prathamesh-chougale-17/shadiff",
   "version": "1.0.3",
   "description": "Generate shadcn/ui registry JSON for your project",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
     "shadiff": "dist/index.js"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   },
   "scripts": {
     "build": "tsc",
