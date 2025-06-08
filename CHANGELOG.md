@@ -5,27 +5,60 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.2.0] - 2025-06-08
+## [1.2.0] - 2025-06-09
 
-### Added
+### 🎉 Major Interactive CLI Enhancement
 
+#### Added
+- **🎨 Interactive CLI with Inquirer Prompts**: Beautiful, user-friendly interactive prompts using `@inquirer/prompts`
+- **🌈 Colorful Design**: Full chalk integration with cyan headers, green success, red errors, yellow warnings, blue info
+- **🔄 Loading Spinners**: Professional ora spinners for long-running operations with smart console output handling
+- **⚡ Default Interactive Mode**: Commands are interactive by default, showing only essential prompts when needed
+- **🔥 Smart Next.js Strategy Selection**: Automatic detection and interactive selection of Next.js app directory strategy
+- **📝 Enhanced Command Aliases**: `g` for generate, `i` for init, `h` for help
+
+#### Interactive Features
+- **Minimal Interactive Mode**: Shows only essential prompts (author + Next.js strategy) when no config exists
+- **Full Interactive Mode**: Complete configuration with advanced options using `-i` flag
+- **Automatic Setup**: `shadiff` without commands triggers automatic minimal setup
+- **Configuration Summary**: Beautiful display of all settings before execution
+- **Smart Prompts**: Only asks for missing essential settings, respects existing configuration
+
+#### Next.js Enhancements
 - **🔥 Next.js App Router Support**: Automatic detection and intelligent handling of Next.js projects
 - **Smart App Directory Targeting**: Files in `app/` or `src/app/` directories are automatically targeted to `examples/` subdirectories
-- **Next.js Project Detection**: Automatically detects Next.js projects by checking for config files (`next.config.js`, `next.config.mjs`, `next.config.ts`)
+- **Next.js Project Detection**: Automatically detects Next.js projects by checking for config files
+- **Strategy Selection**: Interactive choice between 'preserve' (safe) and 'overwrite' strategies
 - **App Code Protection**: Prevents overwriting actual Next.js app code during registry generation
 
+#### Technical Improvements
+- **Smart Console Management**: Ora spinners with console output capture for clean loading experience
+- **Enhanced Error Handling**: Colorful error messages with proper spinner failure states
+- **Command Structure**: Comprehensive help system with examples and usage patterns
+- **Validation**: Input validation with colored error messages and helpful guidance
+
 ### Enhanced
-
 - **NextJsDetector Class**: New utility class with methods for Next.js project detection and path transformation
-- **Console Logging**: Added informative messages when Next.js projects are detected and app files are targeted
-- **Registry Generator**: Enhanced with Next.js-specific logic for intelligent file targeting
+- **Console Logging**: Added informative colorful messages throughout the CLI experience
+- **Registry Generator**: Enhanced with Next.js-specific logic and complete chalk styling
+- **Configuration Management**: Smart detection of missing configuration properties
 
-### Technical
+### Dependencies Added
+- `@inquirer/prompts@^7.5.3` - Interactive CLI prompts
+- `chalk@^5.4.1` - Terminal colors and styling
+- `ora@^8.2.0` - Loading spinners
 
-- Added `src/utils/nextjs-detector.ts` with static methods for Next.js detection
-- Enhanced `ShadcnProjectRegistryGenerator` with Next.js detection in constructor
-- Modified file processing loop to apply special targeting for app directory files
-- Used direct import pattern for `NextJsDetector` to resolve module resolution
+### Command Behavior Changes
+- **`shadiff generate`**: Now interactive by default, shows minimal prompts when no config exists
+- **`shadiff generate -i`**: Full interactive mode with all configuration options
+- **`shadiff`**: Welcome screen with automatic setup for new users
+- **`shadiff init -i`**: Interactive configuration creation with immediate generation option
+
+### Files Added
+- `src/cli/interactive.ts` - Complete interactive CLI implementation
+- `docs/DEFAULT_INTERACTIVE_IMPLEMENTATION.md` - Default interactive behavior documentation
+- `docs/ORA_LOADING_SPINNERS.md` - Loading spinner integration documentation
+- `docs/AUTO_NEXTJS_STRATEGY_SELECTION.md` - Next.js strategy selection documentation
 
 ## [1.1.1] - 2025-06-08
 
