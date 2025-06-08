@@ -3,6 +3,7 @@
 import { input, select, confirm } from "@inquirer/prompts";
 import chalk from "chalk";
 import { Command } from "commander";
+import ora from "ora";
 import { ShadcnProjectRegistryGenerator } from "../core/index.js";
 import { loadConfig, createDefaultConfig } from "../config/index.js";
 import { NextJsDetector } from "../utils/nextjs-detector.js";
@@ -318,12 +319,42 @@ async function runGenerate(options: any, interactive: boolean = false) {
         return;
       }
     }
-
     console.log(); // Add spacing
 
-    // Generate registry
-    const generator = new ShadcnProjectRegistryGenerator(config);
-    generator.run();
+    // Generate registry with loading spinner
+    const spinner = ora({
+      text: chalk.blue("🚀 Generating registry..."),
+      color: "cyan",
+    }).start();
+
+    try {
+      // Temporarily capture console.log to prevent interference with spinner
+      const originalLog = console.log;
+      const logs: string[] = [];
+
+      console.log = (...args: any[]) => {
+        logs.push(
+          args
+            .map((arg) => (typeof arg === "string" ? arg : JSON.stringify(arg)))
+            .join(" ")
+        );
+      };
+
+      const generator = new ShadcnProjectRegistryGenerator(config);
+      generator.run();
+
+      // Restore console.log
+      console.log = originalLog;
+
+      spinner.succeed(chalk.green("✨ Registry generated successfully!"));
+
+      // Show the captured logs
+      console.log();
+      logs.forEach((log) => console.log(log));
+    } catch (error) {
+      spinner.fail(chalk.red("❌ Registry generation failed"));
+      throw error;
+    }
   } catch (error) {
     if (error instanceof Error) {
       logError(`Generation failed: ${error.message}`);
@@ -396,9 +427,26 @@ program
       };
 
       const configFile = "shadcn-registry.config.json";
-      fs.writeFileSync(configFile, JSON.stringify(configWithDefaults, null, 2));
 
-      logSuccess(`Configuration file created: ${chalk.cyan(configFile)}`);
+      const configSpinner = ora({
+        text: chalk.blue("💾 Creating configuration file..."),
+        color: "cyan",
+      }).start();
+
+      try {
+        fs.writeFileSync(
+          configFile,
+          JSON.stringify(configWithDefaults, null, 2)
+        );
+        configSpinner.succeed(
+          chalk.green(
+            `✅ Configuration file created: ${chalk.cyan(configFile)}`
+          )
+        );
+      } catch (error) {
+        configSpinner.fail(chalk.red("❌ Failed to create configuration file"));
+        throw error;
+      }
 
       const runNow = await confirm({
         message: chalk.blue(
@@ -406,13 +454,46 @@ program
         ),
         default: true,
       });
-
       if (runNow) {
         console.log(); // Add spacing
-        const generator = new ShadcnProjectRegistryGenerator(
-          configWithDefaults
-        );
-        generator.run();
+
+        const spinner = ora({
+          text: chalk.blue("🚀 Generating registry..."),
+          color: "cyan",
+        }).start();
+
+        try {
+          // Temporarily capture console.log to prevent interference with spinner
+          const originalLog = console.log;
+          const logs: string[] = [];
+
+          console.log = (...args: any[]) => {
+            logs.push(
+              args
+                .map((arg) =>
+                  typeof arg === "string" ? arg : JSON.stringify(arg)
+                )
+                .join(" ")
+            );
+          };
+
+          const generator = new ShadcnProjectRegistryGenerator(
+            configWithDefaults
+          );
+          generator.run();
+
+          // Restore console.log
+          console.log = originalLog;
+
+          spinner.succeed(chalk.green("✨ Registry generated successfully!"));
+
+          // Show the captured logs
+          console.log();
+          logs.forEach((log) => console.log(log));
+        } catch (error) {
+          spinner.fail(chalk.red("❌ Registry generation failed"));
+          throw error;
+        }
       }
     } else {
       createDefaultConfig();
@@ -518,11 +599,44 @@ if (process.argv.length === 2) {
         message: chalk.blue("🚀 Generate registry now?"),
         default: true,
       });
-
       if (proceed) {
         console.log(); // Add spacing
-        const generator = new ShadcnProjectRegistryGenerator(config);
-        generator.run();
+
+        const spinner = ora({
+          text: chalk.blue("🚀 Generating registry..."),
+          color: "cyan",
+        }).start();
+
+        try {
+          // Temporarily capture console.log to prevent interference with spinner
+          const originalLog = console.log;
+          const logs: string[] = [];
+
+          console.log = (...args: any[]) => {
+            logs.push(
+              args
+                .map((arg) =>
+                  typeof arg === "string" ? arg : JSON.stringify(arg)
+                )
+                .join(" ")
+            );
+          };
+
+          const generator = new ShadcnProjectRegistryGenerator(config);
+          generator.run();
+
+          // Restore console.log
+          console.log = originalLog;
+
+          spinner.succeed(chalk.green("✨ Registry generated successfully!"));
+
+          // Show the captured logs
+          console.log();
+          logs.forEach((log) => console.log(log));
+        } catch (error) {
+          spinner.fail(chalk.red("❌ Registry generation failed"));
+          throw error;
+        }
       } else {
         logInfo(
           "You can run 'shadiff generate' anytime to create the registry."
