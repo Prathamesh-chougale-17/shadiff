@@ -37,6 +37,7 @@ Add to your `package.json`:
 {
   "scripts": {
     "generate-registry": "shadiff generate",
+    "generate-public": "shadiff generate -o public/registry.json",
     "init-registry": "shadiff init"
   }
 }
@@ -55,8 +56,8 @@ npx shadiff@latest generate
 # Initialize config with latest version
 npx shadiff@latest init
 
-# Generate with custom options
-npx shadiff@latest generate --root-dir ./src --output my-registry.json --author "Your Name"
+# Generate with custom options (includes custom output directories!)
+npx shadiff@latest generate --root-dir ./src --output public/registry.json --author "Your Name"
 ```
 
 ### Global Installation
@@ -91,6 +92,7 @@ shadiff init
 - **🎯 Registry Dependencies** - Automatically adds detected shadcn components to `registryDependencies`  
 - **📦 Smart Dependency Filtering** - Excludes common framework packages (React, Next.js, Tailwind, etc.)  
 - **🗂️ Intelligent File Categorization** - Automatically categorizes files as components, pages, libs, etc.  
+- **📁 Custom Output Directories** - Save registry files to any directory with automatic directory creation
 - **⚙️ Configurable** - Supports custom configuration via config file  
 - **📝 TypeScript Support** - Full TypeScript and JSX/TSX support  
 - **🏗️ Modular Architecture** - Clean, maintainable codebase with industry-standard folder structure
@@ -171,10 +173,10 @@ npx shadiff@latest generate
 shadiff generate
 
 # Custom options with npx
-npx shadiff@latest generate --root-dir ./src --output my-registry.json --author "Your Name"
+npx shadiff@latest generate --root-dir ./src --output public/registry.json --author "Your Name"
 
 # Custom options (global install)
-shadiff generate --root-dir ./src --output my-registry.json --author "Your Name"
+shadiff generate --root-dir ./src --output public/registry.json --author "Your Name"
 ```
 
 #### Initialize Configuration
@@ -202,6 +204,30 @@ Create a `shadcn-registry.config.json` file in your project root:
   "author": "Your Name"
 }
 ```
+
+### 📁 Custom Output Directories
+
+**New in v1.1.0!** You can now save registry files to any directory:
+
+```bash
+# Save to public folder for static hosting
+npx shadiff@latest generate -o public/registry.json
+
+# Save to assets directory
+npx shadiff@latest generate -o assets/data/components.json
+
+# Save to nested directories (auto-creates missing folders)
+npx shadiff@latest generate -o dist/registry/my-project.json
+
+# Works with any path structure
+npx shadiff@latest generate -o docs/api/registry.json
+```
+
+**Features:**
+- ✅ **Automatic Directory Creation** - Missing directories are created automatically
+- ✅ **Nested Paths** - Supports deeply nested directory structures  
+- ✅ **Cross-Platform** - Works on Windows, macOS, and Linux
+- ✅ **Relative & Absolute Paths** - Supports both path types
 
 ## Example Output
 
@@ -332,7 +358,7 @@ shadiff --version
 | Option | Alias | Description | Default | Example |
 |--------|-------|-------------|---------|---------|
 | `--root-dir` | `-r` | Root directory to scan | `process.cwd()` | `--root-dir ./src` |
-| `--output` | `-o` | Output file path | `registry.json` | `--output my-registry.json` |
+| `--output` | `-o` | Output file path (supports custom directories) | `registry.json` | `--output public/registry.json` |
 | `--author` | `-a` | Author information | `Project Author` | `--author "John Doe"` |
 | `--help` | `-h` | Show help information | - | `--help` |
 | `--version` | `-v` | Show version | - | `--version` |
@@ -343,8 +369,13 @@ shadiff --version
 # Basic usage
 npx shadiff@latest generate
 
-# Custom output file
+# Custom output file in same directory
 npx shadiff@latest generate --output components-registry.json
+
+# Save to custom directory (auto-creates directories)
+npx shadiff@latest generate --output public/registry.json
+npx shadiff@latest generate --output assets/data/components.json
+npx shadiff@latest generate --output dist/registry/my-components.json
 
 # Scan specific directory
 npx shadiff@latest generate --root-dir ./src/components
@@ -352,8 +383,8 @@ npx shadiff@latest generate --root-dir ./src/components
 # Set author information
 npx shadiff@latest generate --author "Design Team <design@company.com>"
 
-# Combine multiple options
-npx shadiff@latest generate --root-dir ./src --output ./dist/registry.json --author "Your Name"
+# Combine multiple options with custom directory
+npx shadiff@latest generate --root-dir ./src --output ./public/registry.json --author "Your Name"
 ```
 
 ### File Categories
