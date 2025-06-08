@@ -57,6 +57,10 @@ export const EXCLUDED_FILES = [
   "shadcn_registry_cli.js",
   "shadcn_registry_cli.ts",
   "next-env.d.ts",
+  ".env",
+  ".env.local",
+  ".env.production",
+  ".env.development",
 ];
 
 export const EXCLUDED_EXTENSIONS = [

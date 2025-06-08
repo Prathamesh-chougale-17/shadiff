@@ -11,7 +11,7 @@ const program = new Command();
 program
   .name("shadiff")
   .description("Generate shadcn/ui registry JSON for your project")
-  .version("1.1.0");
+  .version("1.1.1");
 
 program
   .command("generate")
