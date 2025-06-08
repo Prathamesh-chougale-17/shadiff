@@ -224,6 +224,7 @@ npx shadiff@latest generate -o docs/api/registry.json
 ```
 
 **Features:**
+
 - ✅ **Automatic Directory Creation** - Missing directories are created automatically
 - ✅ **Nested Paths** - Supports deeply nested directory structures  
 - ✅ **Cross-Platform** - Works on Windows, macOS, and Linux
