@@ -31,6 +31,7 @@ export function createDefaultConfig(): void {
       "package-lock.json",
     ],
     author: "Project Author",
+    nextjsAppStrategy: "preserve",
   };
 
   fs.writeFileSync(

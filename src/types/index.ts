@@ -4,6 +4,7 @@ export interface ShadcnProjectRegistryOptions {
   includePatterns?: string[];
   excludePatterns?: string[];
   author?: string;
+  nextjsAppStrategy?: "preserve" | "overwrite";
 }
 
 export interface RegistryFile {

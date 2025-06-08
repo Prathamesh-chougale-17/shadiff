@@ -23,12 +23,27 @@ program
     "registry.json"
   )
   .option("-a, --author <author>", "Author information", "Project Author")
+  .option(
+    "--nextjs-app-strategy <strategy>",
+    "Next.js app directory handling: 'preserve' (default, targets to examples/) or 'overwrite' (original position)",
+    "preserve"
+  )
   .action((options: any) => {
+    // Validate nextjs-app-strategy option
+    const validStrategies = ["preserve", "overwrite"];
+    if (!validStrategies.includes(options.nextjsAppStrategy)) {
+      console.error(
+        `❌ Invalid nextjs-app-strategy: ${options.nextjsAppStrategy}. Must be 'preserve' or 'overwrite'.`
+      );
+      process.exit(1);
+    }
+
     // Map CLI options to generator options
     const generatorOptions: ShadcnProjectRegistryOptions = {
       rootDir: options.rootDir,
       outputFile: options.output, // Map 'output' to 'outputFile'
       author: options.author,
+      nextjsAppStrategy: options.nextjsAppStrategy,
     };
     const generator = new ShadcnProjectRegistryGenerator(generatorOptions);
     generator.run();

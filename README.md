@@ -100,27 +100,55 @@ shadiff init
 
 ## 🔥 Next.js App Router Support
 
-**New Feature!** Shadiff now automatically detects Next.js projects and provides intelligent handling for app directory files:
+**New Feature!** Shadiff now automatically detects Next.js projects and provides user choice for handling app directory files:
+
+### User Choice Strategies
+
+**Preserve Strategy (Default)**: Protects your app code by targeting app directory files to `examples/` subdirectories
+
+**Overwrite Strategy**: Keeps app directory files in their original positions (may be overwritten during registry use)
 
 ### How It Works
 
 1. **Automatic Detection** - Detects Next.js projects by checking for `next.config.js`, `next.config.mjs`, or `next.config.ts`
-2. **Smart Targeting** - Files in `app/` or `src/app/` directories are automatically targeted to `examples/` subdirectories
-3. **Preserves Your App** - Prevents overwriting your actual Next.js app code during registry generation
+2. **User Choice** - Choose between preserving app code or allowing overwrite via CLI option or config file
+3. **Smart Targeting** - Based on your choice, files are targeted appropriately
+
+### CLI Usage
+
+```bash
+# Preserve strategy (default) - targets app files to examples/
+npx shadiff generate --nextjs-app-strategy preserve
+
+# Overwrite strategy - keeps app files in original positions  
+npx shadiff generate --nextjs-app-strategy overwrite
+
+# Default behavior (preserve)
+npx shadiff generate
+```
 
 ### Example Output
 
+**Preserve Strategy:**
+
 ```bash
-🔥 Next.js project detected! App directory files will be targeted to examples/
-📂 Next.js app file detected: src/app/page.tsx -> examples/src/app/page.tsx
-📂 Next.js app file detected: app/dashboard/page.tsx -> examples/app/dashboard/page.tsx
+🔥 Next.js project detected! App directory files will be targeted to examples/ to preserve your app code
+📂 Next.js app file detected: src/app/page.tsx -> examples/src/app/page.tsx (preserving original)
+```
+
+**Overwrite Strategy:**
+
+```bash
+🔥 Next.js project detected! App directory files will be kept in original positions (may be overwritten)
+📂 Next.js app file detected: src/app/page.tsx (will be overwritten)
 ```
 
 ### Benefits
 
-- ✅ **Safe Registry Generation** - Your app code remains untouched
-- ✅ **Example Preservation** - App files become examples for other developers
-- ✅ **Zero Configuration** - Works automatically when Next.js is detected
+- ✅ **User Choice** - Choose between safety (preserve) or original structure (overwrite)
+- ✅ **Safe by Default** - Preserve strategy protects your app code automatically
+- ✅ **Flexible Configuration** - Set strategy via CLI option or config file
+- ✅ **Clear Messaging** - Different console output for each strategy
 - ✅ **Flexible Structure** - Supports both `app/` and `src/app/` directory structures
 
 ## 🏗️ Architecture

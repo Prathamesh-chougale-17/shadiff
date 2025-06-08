@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the Next.js App Router support feature implemented in Shadiff v1.2.0, which automatically detects Next.js projects and intelligently handles app directory files to prevent overwriting actual application code.
+This document describes the Next.js App Router support feature implemented in Shadiff v1.2.0, which automatically detects Next.js projects and provides user choice for handling app directory files. Users can choose between preserving their app code (targeting to examples/) or allowing overwrite (keeping original positions).
 
 ## Architecture
 
@@ -36,15 +36,32 @@ static getNextJsTargetPath(filePath: string, rootDir: string): string
 **File**: `src/core/registry-generator.ts`
 
 - Added `isNextJsProject` property to track detection state
-- Enhanced constructor to perform Next.js detection on initialization
-- Modified file processing loop to apply special targeting for app directory files
-- Added informative console logging for transparency
+- Enhanced constructor to perform Next.js detection on initialization  
+- Modified file processing loop to apply strategy-based targeting for app directory files
+- Added different console messaging for preserve vs overwrite strategies
+- Implemented user choice logic with `nextjsAppStrategy` option
 
-### 2. Module Export Structure
+### 2. CLI Enhancement
 
-**File**: `src/utils/index.ts`
+**File**: `src/cli/index.ts`
 
-Note: `NextJsDetector` uses direct import rather than export through the index file to avoid module resolution issues during development.
+- Added `--nextjs-app-strategy` CLI option with validation
+- Supports "preserve" (default) and "overwrite" values
+- Includes input validation with error handling
+
+### 3. Configuration Support
+
+**File**: `src/config/index.ts`
+
+- Updated default configuration generation to include `nextjsAppStrategy` option
+- Default value set to "preserve" for backward compatibility
+
+### 4. Type System Enhancement
+
+**File**: `src/types/index.ts`
+
+- Added `nextjsAppStrategy?: "preserve" | "overwrite"` to options interface
+- Provides type safety for the new user choice functionality
 
 ## Detection Logic
 
@@ -65,7 +82,11 @@ Files are considered app directory files if they match:
 
 ## Target Path Transformation
 
-### Input → Output Examples
+### User Choice Strategies
+
+#### Preserve Strategy (Default)
+
+App directory files are targeted to `examples/` subdirectories to preserve original app code:
 
 | Original Path | Target Path |
 |---------------|-------------|
@@ -73,6 +94,17 @@ Files are considered app directory files if they match:
 | `src/app/layout.tsx` | `examples/src/app/layout.tsx` |
 | `app/dashboard/page.tsx` | `examples/app/dashboard/page.tsx` |
 | `src/app/about/page.tsx` | `examples/src/app/about/page.tsx` |
+
+#### Overwrite Strategy  
+
+App directory files keep their original paths (may be overwritten during registry use):
+
+| Original Path | Target Path |
+|---------------|-------------|
+| `app/page.tsx` | `app/page.tsx` |
+| `src/app/layout.tsx` | `src/app/layout.tsx` |
+| `app/dashboard/page.tsx` | `app/dashboard/page.tsx` |
+| `src/app/about/page.tsx` | `src/app/about/page.tsx` |
 
 ### Non-App Files (No Change)
 
@@ -84,11 +116,48 @@ Files are considered app directory files if they match:
 
 ## Console Output
 
-When Next.js detection occurs, users see:
+### Preserve Strategy Messages
+
+When using the preserve strategy (default), users see:
 
 ```bash
-🔥 Next.js project detected! App directory files will be targeted to examples/
-📂 Next.js app file detected: src/app/page.tsx -> examples/src/app/page.tsx
+🔥 Next.js project detected! App directory files will be targeted to examples/ to preserve your app code
+📂 Next.js app file detected: src/app/page.tsx -> examples/src/app/page.tsx (preserving original)
+```
+
+### Overwrite Strategy Messages
+
+When using the overwrite strategy, users see:
+
+```bash
+🔥 Next.js project detected! App directory files will be kept in original positions (may be overwritten)
+📂 Next.js app file detected: src/app/page.tsx (will be overwritten)
+```
+
+## CLI Usage
+
+### Command Line Options
+
+```bash
+# Use preserve strategy (default)
+npx shadiff generate --nextjs-app-strategy preserve
+
+# Use overwrite strategy  
+npx shadiff generate --nextjs-app-strategy overwrite
+
+# Default behavior (preserve)
+npx shadiff generate
+```
+
+### Configuration File
+
+```json
+{
+  "rootDir": ".",
+  "outputFile": "registry.json", 
+  "nextjsAppStrategy": "preserve",
+  "author": "Your Name"
+}
 ```
 
 ## Benefits

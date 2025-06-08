@@ -7,6 +7,9 @@ test-*.json
 my-registry.json
 advanced-registry.json
 
+app
+next.config.js
+
 # Keep important config files
 !package.json
 !package-lock.json

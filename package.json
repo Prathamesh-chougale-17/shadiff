@@ -35,6 +35,8 @@
   },
   "homepage": "https://github.com/Prathamesh-Chougale-17/shadiff#readme",
   "dependencies": {
+    "@inquirer/prompts": "^7.5.3",
+    "chalk": "^5.4.1",
     "commander": "^11.1.0"
   },
   "devDependencies": {
