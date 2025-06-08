@@ -411,17 +411,6 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 MIT License - see LICENSE file for details.
 
-## Changelog
+## 📋 Changelog
 
-### v1.0.1
-
-- Updated CLI bin command to `shadiff` for better usability
-- Improved package naming consistency
-
-### v1.0.0
-
-- Initial release
-- Automatic shadcn/ui component detection  
-- Smart dependency filtering
-- Configurable options
-- TypeScript support
+For detailed version history and updates, see [CHANGELOG.md](./CHANGELOG.md).
