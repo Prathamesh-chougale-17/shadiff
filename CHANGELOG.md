@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2025-06-08
+
+### Added
+
+- **🔥 Next.js App Router Support**: Automatic detection and intelligent handling of Next.js projects
+- **Smart App Directory Targeting**: Files in `app/` or `src/app/` directories are automatically targeted to `examples/` subdirectories
+- **Next.js Project Detection**: Automatically detects Next.js projects by checking for config files (`next.config.js`, `next.config.mjs`, `next.config.ts`)
+- **App Code Protection**: Prevents overwriting actual Next.js app code during registry generation
+
+### Enhanced
+
+- **NextJsDetector Class**: New utility class with methods for Next.js project detection and path transformation
+- **Console Logging**: Added informative messages when Next.js projects are detected and app files are targeted
+- **Registry Generator**: Enhanced with Next.js-specific logic for intelligent file targeting
+
+### Technical
+
+- Added `src/utils/nextjs-detector.ts` with static methods for Next.js detection
+- Enhanced `ShadcnProjectRegistryGenerator` with Next.js detection in constructor
+- Modified file processing loop to apply special targeting for app directory files
+- Used direct import pattern for `NextJsDetector` to resolve module resolution
+
 ## [1.1.1] - 2025-06-08
 
 ### Security

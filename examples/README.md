@@ -15,6 +15,8 @@ This directory contains practical examples of how to use Shadiff in different pr
 - Optimized for Next.js projects
 - Includes typical Next.js exclusions
 - TypeScript focused
+- **Features automatic Next.js detection and app directory targeting**
+- **App files are automatically targeted to `examples/` subdirectories**
 
 ### 3. Vite Project (`vite-example.js`)
 

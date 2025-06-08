@@ -1,4 +1,5 @@
 // Example: Next.js project configuration for Shadiff
+// This example demonstrates Next.js detection and app directory targeting
 
 import { ShadcnProjectRegistryGenerator } from '../dist/index.js';
 
@@ -22,3 +23,4 @@ const generator = new ShadcnProjectRegistryGenerator(nextjsConfig);
 generator.run();
 
 console.log('✅ Next.js registry generated successfully!');
+console.log('📂 Files in app/ or src/app/ directories will be targeted to examples/ to avoid overwriting your app code.');

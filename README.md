@@ -93,9 +93,35 @@ shadiff init
 - **📦 Smart Dependency Filtering** - Excludes common framework packages (React, Next.js, Tailwind, etc.)  
 - **🗂️ Intelligent File Categorization** - Automatically categorizes files as components, pages, libs, etc.  
 - **📁 Custom Output Directories** - Save registry files to any directory with automatic directory creation
+- **🔥 Next.js App Router Support** - Automatically detects Next.js projects and targets app directory files to `examples/` to prevent overwriting your app code
 - **⚙️ Configurable** - Supports custom configuration via config file  
 - **📝 TypeScript Support** - Full TypeScript and JSX/TSX support  
 - **🏗️ Modular Architecture** - Clean, maintainable codebase with industry-standard folder structure
+
+## 🔥 Next.js App Router Support
+
+**New Feature!** Shadiff now automatically detects Next.js projects and provides intelligent handling for app directory files:
+
+### How It Works
+
+1. **Automatic Detection** - Detects Next.js projects by checking for `next.config.js`, `next.config.mjs`, or `next.config.ts`
+2. **Smart Targeting** - Files in `app/` or `src/app/` directories are automatically targeted to `examples/` subdirectories
+3. **Preserves Your App** - Prevents overwriting your actual Next.js app code during registry generation
+
+### Example Output
+
+```bash
+🔥 Next.js project detected! App directory files will be targeted to examples/
+📂 Next.js app file detected: src/app/page.tsx -> examples/src/app/page.tsx
+📂 Next.js app file detected: app/dashboard/page.tsx -> examples/app/dashboard/page.tsx
+```
+
+### Benefits
+
+- ✅ **Safe Registry Generation** - Your app code remains untouched
+- ✅ **Example Preservation** - App files become examples for other developers
+- ✅ **Zero Configuration** - Works automatically when Next.js is detected
+- ✅ **Flexible Structure** - Supports both `app/` and `src/app/` directory structures
 
 ## 🏗️ Architecture
 

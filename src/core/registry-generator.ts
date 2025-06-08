@@ -11,6 +11,7 @@ import {
   FileScanner,
   DependencyExtractor,
   ShadcnComponentDetector,
+  NextJsDetector,
 } from "../utils/index.js";
 
 export class ShadcnProjectRegistryGenerator {
@@ -19,6 +20,7 @@ export class ShadcnProjectRegistryGenerator {
   private fileCategorizer: FileCategorizer;
   private fileScanner: FileScanner;
   private dependencyExtractor: DependencyExtractor;
+  private isNextJsProject: boolean;
 
   constructor(options: ShadcnProjectRegistryOptions = {}) {
     this.options = {
@@ -45,18 +47,26 @@ export class ShadcnProjectRegistryGenerator {
       author: options.author || "Project Author",
     };
 
+    // Check if this is a Next.js project
+    this.isNextJsProject = NextJsDetector.isNextJsProject(this.options.rootDir);
+
     // Initialize utility classes
     this.fileFilter = new FileFilter(this.options);
     this.fileCategorizer = new FileCategorizer(this.options);
     this.fileScanner = new FileScanner(this.options);
     this.dependencyExtractor = new DependencyExtractor(this.options);
   }
-
   /**
    * Generate registry with all files in a single project entry
    */
   generateRegistry(): RegistryItem {
     console.log("🔍 Scanning project for components...");
+
+    if (this.isNextJsProject) {
+      console.log(
+        "🔥 Next.js project detected! App directory files will be targeted to examples/"
+      );
+    }
 
     const allFiles = this.fileScanner.scanDirectory(this.options.rootDir);
     const componentFiles = allFiles.filter((file) =>
@@ -102,12 +112,28 @@ export class ShadcnProjectRegistryGenerator {
         const category = this.fileCategorizer.getFileCategory(filePath);
         const registryType = this.fileCategorizer.getRegistryType(category);
 
+        // Determine target path based on Next.js project detection
+        let targetPath = relativePath;
+
+        if (
+          this.isNextJsProject &&
+          NextJsDetector.isInAppDirectory(filePath, this.options.rootDir)
+        ) {
+          targetPath = NextJsDetector.getNextJsTargetPath(
+            filePath,
+            this.options.rootDir
+          );
+          console.log(
+            `📂 Next.js app file detected: ${relativePath} -> ${targetPath}`
+          );
+        }
+
         // Add file to the files array
         registryFiles.push({
           path: relativePath,
           content: content,
           type: registryType,
-          target: relativePath,
+          target: targetPath,
         });
 
         console.log(`✅ Processed: ${relativePath}`);
