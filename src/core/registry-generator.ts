@@ -135,19 +135,24 @@ export class ShadcnProjectRegistryGenerator {
 
     return projectEntry;
   }
-
   /**
    * Save registry to file (single project object)
    */
   saveRegistry(registryItem: RegistryItem): void {
-    // Output the single project object directly, not wrapped in array
-    fs.writeFileSync(
-      this.options.outputFile,
-      JSON.stringify(registryItem, null, 2),
-      "utf8"
-    );
+    // Resolve the full path for the output file
+    const outputPath = path.resolve(this.options.outputFile);
+    const outputDir = path.dirname(outputPath);
 
-    console.log(`💾 Registry saved to ${this.options.outputFile}`);
+    // Create the directory if it doesn't exist
+    if (!fs.existsSync(outputDir)) {
+      fs.mkdirSync(outputDir, { recursive: true });
+      console.log(`📁 Created directory: ${outputDir}`);
+    }
+
+    // Output the single project object directly, not wrapped in array
+    fs.writeFileSync(outputPath, JSON.stringify(registryItem, null, 2), "utf8");
+
+    console.log(`💾 Registry saved to ${outputPath}`);
   }
 
   /**

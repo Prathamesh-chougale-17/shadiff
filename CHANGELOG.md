@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2025-06-08
+
+### Added
+
+- **Custom Output Directories**: Enhanced `-o, --output` option to support custom directory paths
+- Automatic directory creation for output paths (e.g., `public/registry.json`, `assets/data/r.json`)
+- Support for nested directory structures with recursive directory creation
+
+### Changed
+
+- Updated CLI help text to clarify that output option accepts full paths, not just filenames
+- Improved output path resolution using absolute paths
+
+### Technical
+
+- Enhanced `saveRegistry` method to handle directory creation automatically
+- Added `path.resolve()` and `path.dirname()` for proper path handling
+- Uses `fs.mkdirSync()` with `{ recursive: true }` for directory creation
+
 ## [1.0.6] - 2025-06-07
 
 ### Changed

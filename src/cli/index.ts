@@ -11,13 +11,17 @@ const program = new Command();
 program
   .name("shadiff")
   .description("Generate shadcn/ui registry JSON for your project")
-  .version("1.0.6");
+  .version("1.1.0");
 
 program
   .command("generate")
   .description("Generate registry from project components")
   .option("-r, --root-dir <dir>", "Root directory to scan", process.cwd())
-  .option("-o, --output <file>", "Output file", "registry.json")
+  .option(
+    "-o, --output <path>",
+    "Output file path (e.g., public/registry.json)",
+    "registry.json"
+  )
   .option("-a, --author <author>", "Author information", "Project Author")
   .action((options: any) => {
     // Map CLI options to generator options
