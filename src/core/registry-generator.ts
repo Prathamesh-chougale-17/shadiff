@@ -3,8 +3,10 @@ import path from "path";
 import chalk from "chalk";
 import type {
   ShadcnProjectRegistryOptions,
+  CoreRegistryOptions,
   RegistryItem,
   RegistryFile,
+  RemoteSourceConfig,
 } from "../types/index.js";
 import {
   FileFilter,
@@ -13,18 +15,22 @@ import {
   DependencyExtractor,
   ShadcnComponentDetector,
   NextJsDetector,
+  RemoteFetcher,
 } from "../utils/index.js";
 
 export class ShadcnProjectRegistryGenerator {
-  private options: Required<ShadcnProjectRegistryOptions>;
+  private options: ShadcnProjectRegistryOptions;
+  private coreOptions: CoreRegistryOptions;
   private fileFilter: FileFilter;
   private fileCategorizer: FileCategorizer;
   private fileScanner: FileScanner;
   private dependencyExtractor: DependencyExtractor;
   private isNextJsProject: boolean;
-
+  private remoteFetcher?: RemoteFetcher;
+  private tempRemoteDir?: string;
   constructor(options: ShadcnProjectRegistryOptions = {}) {
-    this.options = {
+    this.options = options;
+    this.coreOptions = {
       rootDir: options.rootDir || process.cwd(),
       outputFile: options.outputFile || "registry.json",
       includePatterns: options.includePatterns || [
@@ -49,14 +55,24 @@ export class ShadcnProjectRegistryGenerator {
       nextjsAppStrategy: options.nextjsAppStrategy || "preserve",
     };
 
-    // Check if this is a Next.js project
-    this.isNextJsProject = NextJsDetector.isNextJsProject(this.options.rootDir);
+    // Setup remote fetcher if remote URL is provided
+    if (options.remoteUrl) {
+      const remoteConfig = RemoteFetcher.parseRemoteUrl(
+        options.remoteUrl,
+        options.remoteBranch,
+        options.remoteAuth
+      );
+      this.remoteFetcher = new RemoteFetcher(remoteConfig);
+    } // Check if this is a Next.js project (will be updated if remote)
+    this.isNextJsProject = NextJsDetector.isNextJsProject(
+      this.coreOptions.rootDir
+    );
 
     // Initialize utility classes
-    this.fileFilter = new FileFilter(this.options);
-    this.fileCategorizer = new FileCategorizer(this.options);
-    this.fileScanner = new FileScanner(this.options);
-    this.dependencyExtractor = new DependencyExtractor(this.options);
+    this.fileFilter = new FileFilter(this.coreOptions);
+    this.fileCategorizer = new FileCategorizer(this.coreOptions);
+    this.fileScanner = new FileScanner(this.coreOptions);
+    this.dependencyExtractor = new DependencyExtractor(this.coreOptions);
   }
   /**
    * Generate registry with all files in a single project entry
@@ -64,7 +80,7 @@ export class ShadcnProjectRegistryGenerator {
     console.log(chalk.blue("🔍 Scanning project for components..."));
     if (this.isNextJsProject) {
       const strategyMessage =
-        this.options.nextjsAppStrategy === "preserve"
+        this.coreOptions.nextjsAppStrategy === "preserve"
           ? chalk.green(
               "App directory files will be targeted to examples/ to preserve your app code"
             )
@@ -76,7 +92,7 @@ export class ShadcnProjectRegistryGenerator {
       );
     }
 
-    const allFiles = this.fileScanner.scanDirectory(this.options.rootDir);
+    const allFiles = this.fileScanner.scanDirectory(this.coreOptions.rootDir);
     const componentFiles = allFiles.filter((file) =>
       this.fileFilter.shouldIncludeFile(file)
     );
@@ -94,18 +110,16 @@ export class ShadcnProjectRegistryGenerator {
     } = this.dependencyExtractor.extractDependenciesFromPackageJson();
 
     const registryDependencies = new Set<string>();
-    const registryFiles: RegistryFile[] = [];
-
-    // Process all files and collect registry dependencies
+    const registryFiles: RegistryFile[] = []; // Process all files and collect registry dependencies
     for (const filePath of componentFiles) {
       try {
         const content = fs.readFileSync(filePath, "utf8");
-        const relativePath = path.relative(this.options.rootDir, filePath);
+        const relativePath = path.relative(this.coreOptions.rootDir, filePath);
 
         // Check if this is a shadcn/ui component
         const isShadcnComponent = ShadcnComponentDetector.isShadcnComponent(
           filePath,
-          this.options.rootDir
+          this.coreOptions.rootDir
         );
 
         const shadcnComponentName = isShadcnComponent
@@ -124,19 +138,17 @@ export class ShadcnProjectRegistryGenerator {
           continue; // Skip adding to files array
         }
         const category = this.fileCategorizer.getFileCategory(filePath);
-        const registryType = this.fileCategorizer.getRegistryType(category);
-
-        // Determine target path based on Next.js project detection and strategy
+        const registryType = this.fileCategorizer.getRegistryType(category); // Determine target path based on Next.js project detection and strategy
         let targetPath = relativePath;
 
         if (
           this.isNextJsProject &&
-          this.options.nextjsAppStrategy === "preserve" &&
-          NextJsDetector.isInAppDirectory(filePath, this.options.rootDir)
+          this.coreOptions.nextjsAppStrategy === "preserve" &&
+          NextJsDetector.isInAppDirectory(filePath, this.coreOptions.rootDir)
         ) {
           targetPath = NextJsDetector.getNextJsTargetPath(
             filePath,
-            this.options.rootDir
+            this.coreOptions.rootDir
           );
           console.log(
             chalk.blue(
@@ -147,8 +159,8 @@ export class ShadcnProjectRegistryGenerator {
           );
         } else if (
           this.isNextJsProject &&
-          this.options.nextjsAppStrategy === "overwrite" &&
-          NextJsDetector.isInAppDirectory(filePath, this.options.rootDir)
+          this.coreOptions.nextjsAppStrategy === "overwrite" &&
+          NextJsDetector.isInAppDirectory(filePath, this.coreOptions.rootDir)
         ) {
           console.log(
             chalk.yellow(
@@ -176,9 +188,7 @@ export class ShadcnProjectRegistryGenerator {
       }
     }
 
-    const registryDeps = Array.from(registryDependencies).sort();
-
-    // Create single project entry with all files
+    const registryDeps = Array.from(registryDependencies).sort(); // Create single project entry with all files
     const projectEntry: RegistryItem = {
       name: "project",
       type: "registry:block",
@@ -186,18 +196,82 @@ export class ShadcnProjectRegistryGenerator {
       devDependencies: packageDevDependencies,
       registryDependencies: registryDeps,
       files: registryFiles,
-      author: this.options.author,
+      author: this.coreOptions.author,
       title: "Complete Project",
     };
 
     return projectEntry;
   }
+
+  /**
+   * Generate registry from remote source
+   */
+  async generateRemoteRegistry(): Promise<RegistryItem> {
+    if (!this.remoteFetcher) {
+      throw new Error("Remote fetcher not configured");
+    }
+
+    console.log(chalk.blue("🌐 Fetching files from remote source..."));
+
+    try {
+      // Download files to temporary directory
+      this.tempRemoteDir = await this.remoteFetcher.downloadToTemp();
+
+      // Update the core options to use the temporary directory
+      const originalRootDir = this.coreOptions.rootDir;
+      this.coreOptions.rootDir = this.tempRemoteDir;
+
+      // Re-check if it's a Next.js project in the remote directory
+      this.isNextJsProject = NextJsDetector.isNextJsProject(this.tempRemoteDir);
+
+      // Re-initialize utility classes with new root directory
+      this.fileFilter = new FileFilter(this.coreOptions);
+      this.fileCategorizer = new FileCategorizer(this.coreOptions);
+      this.fileScanner = new FileScanner(this.coreOptions);
+      this.dependencyExtractor = new DependencyExtractor(this.coreOptions);
+
+      console.log(
+        chalk.green(
+          `✅ Successfully fetched remote files to ${this.tempRemoteDir}`
+        )
+      );
+
+      // Generate registry using the standard method
+      const registryItem = this.generateRegistry();
+
+      // Clean up temporary files
+      this.cleanup();
+
+      // Restore original root directory
+      this.coreOptions.rootDir = originalRootDir;
+
+      return registryItem;
+    } catch (error) {
+      this.cleanup();
+      throw new Error(
+        `Failed to generate registry from remote source: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
+    }
+  }
+
+  /**
+   * Clean up temporary files
+   */
+  private cleanup(): void {
+    if (this.remoteFetcher && this.tempRemoteDir) {
+      this.remoteFetcher.cleanupTemp();
+      this.tempRemoteDir = undefined;
+    }
+  }
+
   /**
    * Save registry to file (single project object)
    */
   saveRegistry(registryItem: RegistryItem): void {
     // Resolve the full path for the output file
-    const outputPath = path.resolve(this.options.outputFile);
+    const outputPath = path.resolve(this.coreOptions.outputFile);
     const outputDir = path.dirname(outputPath); // Create the directory if it doesn't exist
     if (!fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir, { recursive: true });
@@ -212,13 +286,28 @@ export class ShadcnProjectRegistryGenerator {
   /**
    * Main execution
    */
-  run(): void {
+  async run(): Promise<void> {
     console.log(chalk.cyan.bold("🚀 Starting shadcn registry generation...\n"));
 
-    const registryItem = this.generateRegistry();
-    this.saveRegistry(registryItem);
+    try {
+      let registryItem: RegistryItem;
 
-    console.log(chalk.green.bold("\n✨ Generated project registry"));
-    console.log(chalk.green.bold("🎉 Done!"));
+      if (this.options.remoteUrl) {
+        registryItem = await this.generateRemoteRegistry();
+      } else {
+        registryItem = this.generateRegistry();
+      }
+
+      this.saveRegistry(registryItem);
+
+      console.log(chalk.green.bold("\n✨ Generated project registry"));
+      console.log(chalk.green.bold("🎉 Done!"));
+    } catch (error) {
+      console.error(chalk.red.bold("\n❌ Registry generation failed:"));
+      console.error(
+        chalk.red(error instanceof Error ? error.message : "Unknown error")
+      );
+      process.exit(1);
+    }
   }
 }

@@ -28,7 +28,16 @@ program
     "Next.js app directory handling: 'preserve' (default, targets to examples/) or 'overwrite' (original position)",
     "preserve"
   )
-  .action((options: any) => {
+  .option(
+    "--remote-url <url>",
+    "Remote repository URL (GitHub, GitLab, or raw file URL)"
+  )
+  .option("--remote-branch <branch>", "Remote repository branch", "main")
+  .option(
+    "--remote-token <token>",
+    "Authentication token for private repositories"
+  )
+  .action(async (options: any) => {
     // Validate nextjs-app-strategy option
     const validStrategies = ["preserve", "overwrite"];
     if (!validStrategies.includes(options.nextjsAppStrategy)) {
@@ -38,15 +47,56 @@ program
       process.exit(1);
     }
 
+    // Validate remote options
+    if (options.remoteUrl) {
+      try {
+        new URL(options.remoteUrl);
+      } catch (error) {
+        console.error(`❌ Invalid remote URL: ${options.remoteUrl}`);
+        process.exit(1);
+      }
+    }
+
     // Map CLI options to generator options
     const generatorOptions: ShadcnProjectRegistryOptions = {
       rootDir: options.rootDir,
       outputFile: options.output, // Map 'output' to 'outputFile'
       author: options.author,
-      nextjsAppStrategy: options.nextjsAppStrategy,
+      nextjsAppStrategy: options.nextjsAppStrategy, // Add remote options if provided
+      ...(options.remoteUrl && {
+        remoteUrl: options.remoteUrl,
+        remoteBranch: options.remoteBranch,
+        ...(options.remoteToken && {
+          remoteAuth: { token: options.remoteToken },
+        }),
+      }),
     };
-    const generator = new ShadcnProjectRegistryGenerator(generatorOptions);
-    generator.run();
+
+    try {
+      const generator = new ShadcnProjectRegistryGenerator(generatorOptions);
+
+      if (options.remoteUrl) {
+        console.log(
+          `🌐 Generating registry from remote source: ${options.remoteUrl}`
+        );
+        console.log(`📂 Branch: ${options.remoteBranch}`);
+        await generator.generateRemoteRegistry();
+      } else {
+        console.log(
+          `📁 Generating registry from local directory: ${options.rootDir}`
+        );
+        await generator.run();
+      }
+
+      console.log(`✅ Registry generated successfully: ${options.output}`);
+    } catch (error) {
+      console.error(
+        `❌ Failed to generate registry: ${
+          error instanceof Error ? error.message : String(error)
+        }`
+      );
+      process.exit(1);
+    }
   });
 
 program
@@ -58,9 +108,21 @@ program
 
 // If no command provided, run generate with default options
 if (process.argv.length === 2) {
-  const config = loadConfig();
-  const generator = new ShadcnProjectRegistryGenerator(config);
-  generator.run();
+  (async () => {
+    try {
+      const config = loadConfig();
+      const generator = new ShadcnProjectRegistryGenerator(config);
+      await generator.run();
+      console.log(`✅ Registry generated successfully: ${config.outputFile}`);
+    } catch (error) {
+      console.error(
+        `❌ Failed to generate registry: ${
+          error instanceof Error ? error.message : String(error)
+        }`
+      );
+      process.exit(1);
+    }
+  })();
 } else {
   program.parse();
 }

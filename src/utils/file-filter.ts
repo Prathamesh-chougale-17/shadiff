@@ -4,12 +4,12 @@ import {
   EXCLUDED_EXTENSIONS,
   CONFIG_FILE_PATTERNS,
 } from "../constants/index.js";
-import type { ShadcnProjectRegistryOptions } from "../types/index.js";
+import type { CoreRegistryOptions } from "../types/index.js";
 
 export class FileFilter {
-  private options: Required<ShadcnProjectRegistryOptions>;
+  private options: CoreRegistryOptions;
 
-  constructor(options: Required<ShadcnProjectRegistryOptions>) {
+  constructor(options: CoreRegistryOptions) {
     this.options = options;
   }
 

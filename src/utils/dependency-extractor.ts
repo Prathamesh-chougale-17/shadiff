@@ -7,13 +7,13 @@ import {
 import type {
   PackageDependencies,
   PackageJson,
-  ShadcnProjectRegistryOptions,
+  CoreRegistryOptions,
 } from "../types/index.js";
 
 export class DependencyExtractor {
-  private options: Required<ShadcnProjectRegistryOptions>;
+  private options: CoreRegistryOptions;
 
-  constructor(options: Required<ShadcnProjectRegistryOptions>) {
+  constructor(options: CoreRegistryOptions) {
     this.options = options;
   }
 

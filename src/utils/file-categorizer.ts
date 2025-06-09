@@ -4,15 +4,12 @@ import {
   LIB_FOLDERS,
   CONFIG_FILES,
 } from "../constants/index.js";
-import type {
-  FileCategory,
-  ShadcnProjectRegistryOptions,
-} from "../types/index.js";
+import type { FileCategory, CoreRegistryOptions } from "../types/index.js";
 
 export class FileCategorizer {
-  private options: Required<ShadcnProjectRegistryOptions>;
+  private options: CoreRegistryOptions;
 
-  constructor(options: Required<ShadcnProjectRegistryOptions>) {
+  constructor(options: CoreRegistryOptions) {
     this.options = options;
   }
 

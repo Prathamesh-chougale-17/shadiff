@@ -151,3 +151,39 @@ export const CONFIG_FILES = [
   "vite.config.ts",
   "webpack.config.js",
 ];
+
+// Message constants for CLI prompts and output
+export const MESSAGES = {
+  NEXTJS_DETECTED: "Next.js project detected! 🔥",
+  NEXTJS_STRATEGY_PROMPT: "🔥 Choose Next.js app directory strategy:",
+  NEXTJS_STRATEGY_LOCAL: "🔥 Next.js app directory strategy:",
+  NEXTJS_STRATEGY_REMOTE: "🔥 Next.js strategy (if remote repo is Next.js):",
+  CHOOSE_SOURCE_TYPE: "📂 Choose source type:",
+  CONFIGURE_ADVANCED: "⚙️ Configure advanced options?",
+  INCLUDE_PATTERNS: "📋 Include file patterns (comma-separated):",
+  EXCLUDE_PATTERNS: "🚫 Exclude patterns (comma-separated):",
+  AUTHOR_NAME: "👤 Author name:",
+  OUTPUT_FILE: "💾 Output file path:",
+  ROOT_DIRECTORY: "📁 Root directory to scan:",
+  REPO_URL: "🌐 Repository URL:",
+  BRANCH_NAME: "🌿 Branch name:",
+  REQUIRES_AUTH: "🔐 Requires authentication? (Skip for public repos)",
+  ACCESS_TOKEN: "🔑 Access token:",
+  START_GENERATION: "🚀 Start registry generation?",
+} as const;
+
+// Default values for CLI configuration
+export const DEFAULTS = {
+  BRANCH: "main",
+  ROOT_DIR: ".",
+  OUTPUT_FILE: "registry.json",
+  AUTHOR: "Project Author",
+  NEXTJS_STRATEGY: "preserve" as const,
+  SOURCE_TYPE: "local" as const,
+  REQUIRES_AUTH: false,
+  CONFIGURE_ADVANCED: false,
+  CONFIRM_PROCEED: true,
+} as const;
+
+// Configuration file name
+export const CONFIG_FILE = "shadcn-registry.config.json";

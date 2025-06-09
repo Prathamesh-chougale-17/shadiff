@@ -1,11 +1,11 @@
 import fs from "fs";
 import path from "path";
-import type { ShadcnProjectRegistryOptions } from "../types/index.js";
+import type { CoreRegistryOptions } from "../types/index.js";
 
 export class FileScanner {
-  private options: Required<ShadcnProjectRegistryOptions>;
+  private options: CoreRegistryOptions;
 
-  constructor(options: Required<ShadcnProjectRegistryOptions>) {
+  constructor(options: CoreRegistryOptions) {
     this.options = options;
   }
 
