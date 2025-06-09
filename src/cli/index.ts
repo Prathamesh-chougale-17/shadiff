@@ -27,7 +27,8 @@ program
     "--nextjs-app-strategy <strategy>",
     "Next.js app directory handling: 'preserve' (default, targets to examples/) or 'overwrite' (original position)",
     "preserve"
-  )  .option(
+  )
+  .option(
     "--remote-url <url>",
     "Remote repository URL (GitHub, GitLab, or raw file URL)"
   )
@@ -53,7 +54,7 @@ program
         console.error(`❌ Invalid remote URL: ${options.remoteUrl}`);
         process.exit(1);
       }
-    }    // Map CLI options to generator options
+    } // Map CLI options to generator options
     const generatorOptions: ShadcnProjectRegistryOptions = {
       rootDir: options.rootDir,
       outputFile: options.output, // Map 'output' to 'outputFile'
@@ -68,7 +69,8 @@ program
     };
 
     try {
-      const generator = new ShadcnProjectRegistryGenerator(generatorOptions);      if (options.remoteUrl) {
+      const generator = new ShadcnProjectRegistryGenerator(generatorOptions);
+      if (options.remoteUrl) {
         console.log(
           `🌐 Generating registry from remote source: ${options.remoteUrl}`
         );

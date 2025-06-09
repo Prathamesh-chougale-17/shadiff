@@ -21,14 +21,12 @@ export class RemoteFetcher {
     this.config = config;
     this.tempDir = path.join(process.cwd(), ".shadiff-temp");
     this.gitCloner = new GitCloner();
-  }  /**
+  }
+  /**
    * Parse remote URLs and store original URLs for git cloning
    * API URLs are generated when needed for fallback scenarios
    */
-  static parseRemoteUrl(
-    url: string,
-    auth?: any
-  ): RemoteSourceConfig {
+  static parseRemoteUrl(url: string, auth?: any): RemoteSourceConfig {
     const urlObj = new URL(url);
     const hostname = urlObj.hostname.toLowerCase();
 
@@ -98,10 +96,12 @@ export class RemoteFetcher {
       const pathParts = urlObj.pathname.split("/").filter(Boolean);
       if (pathParts.length >= 2) {
         const project = pathParts.join("%2F");
-        return `https://gitlab.com/api/v4/projects/${encodeURIComponent(project)}`;
+        return `https://gitlab.com/api/v4/projects/${encodeURIComponent(
+          project
+        )}`;
       }
     }
-    
+
     // For raw and generic URLs, return as-is
     return this.config.url;
   }
@@ -163,7 +163,8 @@ export class RemoteFetcher {
 
       req.end();
     });
-  }  /**
+  }
+  /**
    * Check if we should use git cloning instead of API calls
    * Use git cloning for public repositories when no auth is provided
    */
@@ -183,7 +184,8 @@ export class RemoteFetcher {
 
     // Check if the URL is clonable (we now store original URLs directly)
     return GitCloner.isClonableUrl(this.config.url);
-  }  /**
+  }
+  /**
    * Fetch files using git cloning
    */
   private async fetchUsingGitCloning(): Promise<RemoteFile[]> {
@@ -354,14 +356,12 @@ export class RemoteFetcher {
         (item: any) => item.type === "blob" && this.shouldIncludeFile(item.path)
       );
 
-      console.log(`📁 Found ${fileItems.length} files to process`);      // Fetch file contents
+      console.log(`📁 Found ${fileItems.length} files to process`); // Fetch file contents
       for (const item of fileItems) {
         try {
-          const fileUrl = `${
-            apiUrl
-          }/repository/files/${encodeURIComponent(item.path)}/raw?ref=${
-            branch
-          }`;
+          const fileUrl = `${apiUrl}/repository/files/${encodeURIComponent(
+            item.path
+          )}/raw?ref=${branch}`;
           const content = await this.fetchUrl(fileUrl, headers);
 
           files.push({

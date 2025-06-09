@@ -103,7 +103,7 @@ export class GitCloner {
       if (fs.existsSync(this.tempDir)) {
         await this.cleanup();
       }
-      fs.mkdirSync(this.tempDir, { recursive: true });      // Clone the repository - let git auto-detect default branch if none specified
+      fs.mkdirSync(this.tempDir, { recursive: true }); // Clone the repository - let git auto-detect default branch if none specified
       let cloneCommand: string;
       if (branch) {
         cloneCommand = `git clone --depth 1 --branch "${branch}" "${cloneUrl}" "${this.tempDir}"`;

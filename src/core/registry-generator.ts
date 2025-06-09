@@ -53,14 +53,14 @@ export class ShadcnProjectRegistryGenerator {
       ],
       author: options.author || "Project Author",
       nextjsAppStrategy: options.nextjsAppStrategy || "preserve",
-    };    // Setup remote fetcher if remote URL is provided
+    }; // Setup remote fetcher if remote URL is provided
     if (options.remoteUrl) {
       const remoteConfig = RemoteFetcher.parseRemoteUrl(
         options.remoteUrl,
         options.remoteAuth
       );
       this.remoteFetcher = new RemoteFetcher(remoteConfig);
-    }// Check if this is a Next.js project (will be updated if remote)
+    } // Check if this is a Next.js project (will be updated if remote)
     this.isNextJsProject = NextJsDetector.isNextJsProject(
       this.coreOptions.rootDir
     );
