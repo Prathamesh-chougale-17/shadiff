@@ -26,7 +26,7 @@ const program = new Command();
 program
   .name(chalk.cyan.bold("shadiff"))
   .description(chalk.gray("Generate shadcn/ui registry JSON for your project"))
-  .version("1.2.0");
+  .version("1.3.0");
 
 // Interactive generate command
 program
