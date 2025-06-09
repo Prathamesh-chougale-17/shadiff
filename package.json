@@ -15,8 +15,8 @@
     "build:clean": "rimraf dist && npm run build",
     "dev": "ts-node src/index.ts",
     "start": "node dist/index.js",
-    "test": "node test/simple-test.js",
-    "test:all": "npm run build && npm run test && npm run example",
+    "test": "node test/end-to-end-test.js",
+    "test:all": "npm run build && npm run test",
     "lint": "echo \"Linting coming soon...\"",
     "example": "node examples/usage.js",
     "prepublishOnly": "npm run build:clean"
