@@ -12,26 +12,21 @@ async function testRealWorldScenario() {
   console.log("=".repeat(70));
   console.log("Simulating actual user workflow with popular repositories");
   console.log("=".repeat(70));
-
   const testScenarios = [
     {
       name: "ShadCN UI Components (Public)",
       url: "https://github.com/shadcn-ui/ui",
-      branch: "main",
       auth: null,
       expectedStrategy: "Git Cloning"
     },
     {
       name: "Next.js Examples (Public)",
       url: "https://github.com/vercel/next.js",
-      branch: "canary",
       auth: null,
       expectedStrategy: "Git Cloning"
-    },
-    {
+    },    {
       name: "Private Repository (Simulated)",
-      url: "https://github.com/shadcn-ui/ui",
-      branch: "main",
+      url: "https://github.com/private-user/private-repo", // Non-existent repo
       auth: { token: "fake-token-for-private-repo" },
       expectedStrategy: "API Calls"
     }
@@ -45,16 +40,14 @@ async function testRealWorldScenario() {
     console.log(`\n📋 Testing: ${scenario.name}`);
     console.log("-".repeat(50));
     
-    try {
-      const config = RemoteFetcher.parseRemoteUrl(
-        scenario.url, 
-        scenario.branch, 
+    try {      const config = RemoteFetcher.parseRemoteUrl(
+        scenario.url,
         scenario.auth
       );
       
       const fetcher = new RemoteFetcher(config);
       console.log(`🔗 URL: ${scenario.url}`);
-      console.log(`🌿 Branch: ${scenario.branch}`);
+      console.log(`🌿 Branch: Auto-detected default branch`);
       console.log(`🔐 Auth: ${scenario.auth ? 'Provided' : 'None'}`);
       console.log(`📈 Expected Strategy: ${scenario.expectedStrategy}`);
       
@@ -135,10 +128,9 @@ async function demonstratePerformanceImprovement() {
   // Test 1: Git Cloning (no auth)
   console.log("\n🚀 Test 1: Git Cloning Strategy");
   console.log("-".repeat(40));
-  
-  const startGit = Date.now();
+    const startGit = Date.now();
   try {
-    const configGit = RemoteFetcher.parseRemoteUrl(testRepo, "master");
+    const configGit = RemoteFetcher.parseRemoteUrl(testRepo);
     const fetcherGit = new RemoteFetcher(configGit);
     
     await fetcherGit.downloadToTemp();

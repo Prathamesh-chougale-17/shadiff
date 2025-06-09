@@ -9,17 +9,11 @@ import { MESSAGES, DEFAULTS } from "../constants/index.js";
  */
 export async function collectRemoteConfig(): Promise<{
   remoteUrl: string;
-  remoteBranch: string;
   remoteAuth?: { token: string };
 }> {
   const remoteUrl = await input({
     message: createBluePrompt(MESSAGES.REPO_URL),
     validate: validateUrl,
-  });
-
-  const remoteBranch = await input({
-    message: createBluePrompt(MESSAGES.BRANCH_NAME),
-    default: DEFAULTS.BRANCH,
   });
 
   const needsAuth = await confirm({
@@ -36,7 +30,7 @@ export async function collectRemoteConfig(): Promise<{
     remoteAuth = { token };
   }
 
-  return { remoteUrl, remoteBranch, remoteAuth };
+  return { remoteUrl, remoteAuth };
 }
 
 /**

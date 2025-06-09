@@ -6,7 +6,6 @@ export interface ShadcnProjectRegistryOptions {
   author?: string;
   nextjsAppStrategy?: "preserve" | "overwrite";
   remoteUrl?: string;
-  remoteBranch?: string;
   remoteAuth?: {
     token?: string;
     username?: string;

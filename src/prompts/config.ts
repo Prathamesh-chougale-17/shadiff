@@ -55,16 +55,11 @@ export function mergeConfigWithCliOptions(
       existingConfig.nextjsAppStrategy ||
       DEFAULTS.NEXTJS_STRATEGY,
     includePatterns: existingConfig.includePatterns,
-    excludePatterns: existingConfig.excludePatterns,
-    // Add remote options support
+    excludePatterns: existingConfig.excludePatterns, // Add remote options support
     ...(options.remoteUrl && { remoteUrl: options.remoteUrl }),
-    ...(options.remoteBranch && { remoteBranch: options.remoteBranch }),
     ...(options.remoteToken && { remoteAuth: { token: options.remoteToken } }),
     // Also check existing config for remote options
     ...(existingConfig.remoteUrl && { remoteUrl: existingConfig.remoteUrl }),
-    ...(existingConfig.remoteBranch && {
-      remoteBranch: existingConfig.remoteBranch,
-    }),
     ...(existingConfig.remoteAuth && { remoteAuth: existingConfig.remoteAuth }),
   };
 }
@@ -81,7 +76,6 @@ export function buildRemoteConfigFromOptions(
     author: options.author || DEFAULTS.AUTHOR,
     nextjsAppStrategy: options.nextjsAppStrategy || DEFAULTS.NEXTJS_STRATEGY,
     remoteUrl: options.remoteUrl,
-    remoteBranch: options.remoteBranch || DEFAULTS.BRANCH,
     ...(options.remoteToken && { remoteAuth: { token: options.remoteToken } }),
   };
 }

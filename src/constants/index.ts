@@ -174,7 +174,6 @@ export const MESSAGES = {
 
 // Default values for CLI configuration
 export const DEFAULTS = {
-  BRANCH: "main",
   ROOT_DIR: ".",
   OUTPUT_FILE: "registry.json",
   AUTHOR: "Project Author",

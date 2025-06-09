@@ -77,13 +77,12 @@ export class GitCloner {
       return false;
     }
   }
-
   /**
    * Clone repository and extract files
    */
   async cloneAndExtractFiles(
     url: string,
-    branch: string = "main",
+    branch?: string, // Make branch optional
     targetPath: string = ""
   ): Promise<RemoteFile[]> {
     if (!GitCloner.isClonableUrl(url)) {
@@ -104,16 +103,20 @@ export class GitCloner {
       if (fs.existsSync(this.tempDir)) {
         await this.cleanup();
       }
-      fs.mkdirSync(this.tempDir, { recursive: true });
-
-      // Clone the repository with specific branch
-      const cloneCommand = `git clone --depth 1 --branch "${branch}" "${cloneUrl}" "${this.tempDir}"`;
+      fs.mkdirSync(this.tempDir, { recursive: true });      // Clone the repository - let git auto-detect default branch if none specified
+      let cloneCommand: string;
+      if (branch) {
+        cloneCommand = `git clone --depth 1 --branch "${branch}" "${cloneUrl}" "${this.tempDir}"`;
+      } else {
+        // No branch specified - let git auto-detect the default branch
+        cloneCommand = `git clone --depth 1 "${cloneUrl}" "${this.tempDir}"`;
+      }
 
       try {
         await execAsync(cloneCommand);
       } catch (error: any) {
-        // If branch doesn't exist, try default branch
-        if (error.message.includes("Remote branch") && branch !== "main") {
+        // If specific branch doesn't exist and we specified one, try without branch
+        if (branch && error.message.includes("Remote branch")) {
           const fallbackCommand = `git clone --depth 1 "${cloneUrl}" "${this.tempDir}"`;
           await execAsync(fallbackCommand);
         } else {

@@ -20,7 +20,7 @@ async function testFullWorkflow() {
   try {
     // Step 1: Parse URL and create fetcher
     console.log("\n📋 Step 1: Parsing URL and creating fetcher");
-    const config = RemoteFetcher.parseRemoteUrl(testUrl, branch);
+    const config = RemoteFetcher.parseRemoteUrl(testUrl);
     const fetcher = new RemoteFetcher(config);
     
     console.log(`   Repository: ${testUrl}`);

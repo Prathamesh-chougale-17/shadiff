@@ -23,7 +23,7 @@ async function testTempDirectoryBehavior() {
 
   try {
     // Parse the URL (should trigger git cloning for public repos)
-    const config = RemoteFetcher.parseRemoteUrl(testUrl, branch);
+    const config = RemoteFetcher.parseRemoteUrl(testUrl);
     console.log(`\n🔧 Config type: ${config.type}`);
     console.log(`🔧 Has auth: ${!!config.auth}`);
     
@@ -86,7 +86,7 @@ async function testWithAuth() {
   const shadiffGitTempPath = path.join(process.cwd(), ".shadiff-temp-git");
 
   try {
-    const config = RemoteFetcher.parseRemoteUrl(testUrl, branch, auth);
+    const config = RemoteFetcher.parseRemoteUrl(testUrl, auth);
     console.log(`🔧 Config type: ${config.type}`);
     console.log(`🔧 Has auth: ${!!config.auth}`);
     

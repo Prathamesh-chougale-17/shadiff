@@ -8,12 +8,11 @@ export function displayConfigSummary(
   config: ShadcnProjectRegistryOptions
 ): void {
   console.log(chalk.cyan.bold("\n📋 Configuration Summary\n"));
-
   if (config.remoteUrl) {
     console.log(chalk.gray("🌐 Remote URL:"), chalk.white(config.remoteUrl));
     console.log(
       chalk.gray("🌿 Branch:"),
-      chalk.white(config.remoteBranch || "main")
+      chalk.white("Auto-detected default branch")
     );
     console.log(
       chalk.gray("🔐 Authentication:"),

@@ -11,10 +11,9 @@ async function testGitCloning() {
   // Test with a public GitHub repository (shadcn/ui)
   const testUrl = "https://github.com/Prathamesh-chougale-17/next-modern-portfolio-template";
   const branch = "master";
-
   try {
     // Parse the URL (this should trigger git cloning for public repos)
-    const config = RemoteFetcher.parseRemoteUrl(testUrl, branch);
+    const config = RemoteFetcher.parseRemoteUrl(testUrl);
     console.log("📋 Parsed config:", config);
 
     // Create fetcher instance
@@ -41,9 +40,8 @@ async function testWithAuth() {
   const testUrl = "https://github.com/shadcn-ui/ui";
   const branch = "main";
   const auth = { token: "fake-token" }; // This should force API mode
-
   try {
-    const config = RemoteFetcher.parseRemoteUrl(testUrl, branch, auth);
+    const config = RemoteFetcher.parseRemoteUrl(testUrl, auth);
     console.log("📋 Parsed config with auth:", config);
 
     const fetcher = new RemoteFetcher(config);

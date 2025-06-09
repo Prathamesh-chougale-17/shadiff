@@ -138,7 +138,7 @@ function displayConfigSummary(config: ShadcnProjectRegistryOptions) {
     console.log(chalk.gray("🌐 Remote URL:"), chalk.white(config.remoteUrl));
     console.log(
       chalk.gray("🌿 Branch:"),
-      chalk.white(config.remoteBranch || "main")
+      chalk.white("Auto-detected default branch")
     );
     console.log(
       chalk.gray("🔐 Authentication:"),
@@ -171,16 +171,11 @@ function displayConfigSummary(config: ShadcnProjectRegistryOptions) {
 // Remote configuration helper
 async function collectRemoteConfig(): Promise<{
   remoteUrl: string;
-  remoteBranch: string;
   remoteAuth?: { token: string };
 }> {
   const remoteUrl = await input({
     message: createBluePrompt(MESSAGES.REPO_URL),
     validate: validateUrl,
-  });
-  const remoteBranch = await input({
-    message: createBluePrompt(MESSAGES.BRANCH_NAME),
-    default: DEFAULTS.BRANCH,
   });
 
   const needsAuth = await confirm({
@@ -197,7 +192,7 @@ async function collectRemoteConfig(): Promise<{
     remoteAuth = { token };
   }
 
-  return { remoteUrl, remoteBranch, remoteAuth };
+  return { remoteUrl, remoteAuth };
 }
 
 // Enhanced registry generation with common spinner logic

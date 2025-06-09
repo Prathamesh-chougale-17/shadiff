@@ -35,7 +35,7 @@ async function testRemoteUrlParsing() {
   
   for (const url of testUrls) {
     try {
-      const config = RemoteFetcher.parseRemoteUrl(url, "main");
+      const config = RemoteFetcher.parseRemoteUrl(url);
       const fetcher = new RemoteFetcher(config);
       
       // Check if it would use git cloning
@@ -110,7 +110,7 @@ async function testGitCloningWithPublicRepo() {
   
   try {
     // Parse the URL (should trigger git cloning for public repos)
-    const config = RemoteFetcher.parseRemoteUrl(testUrl, branch);
+    const config = RemoteFetcher.parseRemoteUrl(testUrl);
     console.log(`📋 Repository: ${testUrl}`);
     console.log(`📋 Branch: ${branch}`);
     console.log(`📋 Type: ${config.type}`);

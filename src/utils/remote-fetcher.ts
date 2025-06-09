@@ -21,14 +21,12 @@ export class RemoteFetcher {
     this.config = config;
     this.tempDir = path.join(process.cwd(), ".shadiff-temp");
     this.gitCloner = new GitCloner();
-  }
-
-  /**
-   * Parse different types of remote URLs and return configuration
+  }  /**
+   * Parse remote URLs and store original URLs for git cloning
+   * API URLs are generated when needed for fallback scenarios
    */
   static parseRemoteUrl(
     url: string,
-    branch?: string,
     auth?: any
   ): RemoteSourceConfig {
     const urlObj = new URL(url);
@@ -38,13 +36,9 @@ export class RemoteFetcher {
     if (hostname === "github.com" || hostname === "www.github.com") {
       const pathParts = urlObj.pathname.split("/").filter(Boolean);
       if (pathParts.length >= 2) {
-        const owner = pathParts[0];
-        const repo = pathParts[1].replace(/\.git$/, "");
-
         return {
-          url: `https://api.github.com/repos/${owner}/${repo}`,
+          url, // Store original URL for git cloning
           type: "github",
-          branch: branch || "main",
           auth,
           basePath: pathParts.slice(2).join("/") || "",
         };
@@ -55,14 +49,9 @@ export class RemoteFetcher {
     if (hostname === "gitlab.com" || hostname === "www.gitlab.com") {
       const pathParts = urlObj.pathname.split("/").filter(Boolean);
       if (pathParts.length >= 2) {
-        const project = pathParts.join("%2F");
-
         return {
-          url: `https://gitlab.com/api/v4/projects/${encodeURIComponent(
-            project
-          )}`,
+          url, // Store original URL for git cloning
           type: "gitlab",
-          branch: branch || "main",
           auth,
           basePath: "",
         };
@@ -78,7 +67,6 @@ export class RemoteFetcher {
       return {
         url,
         type: "raw",
-        branch: branch || "main",
         auth,
         basePath: "",
       };
@@ -88,10 +76,34 @@ export class RemoteFetcher {
     return {
       url,
       type: "generic",
-      branch: branch || "main",
       auth,
       basePath: "",
     };
+  }
+
+  /**
+   * Convert original repository URL to API URL when needed for API calls
+   */
+  private getApiUrl(): string {
+    if (this.config.type === "github") {
+      const urlObj = new URL(this.config.url);
+      const pathParts = urlObj.pathname.split("/").filter(Boolean);
+      if (pathParts.length >= 2) {
+        const owner = pathParts[0];
+        const repo = pathParts[1].replace(/\.git$/, "");
+        return `https://api.github.com/repos/${owner}/${repo}`;
+      }
+    } else if (this.config.type === "gitlab") {
+      const urlObj = new URL(this.config.url);
+      const pathParts = urlObj.pathname.split("/").filter(Boolean);
+      if (pathParts.length >= 2) {
+        const project = pathParts.join("%2F");
+        return `https://gitlab.com/api/v4/projects/${encodeURIComponent(project)}`;
+      }
+    }
+    
+    // For raw and generic URLs, return as-is
+    return this.config.url;
   }
 
   /**
@@ -151,8 +163,7 @@ export class RemoteFetcher {
 
       req.end();
     });
-  }
-  /**
+  }  /**
    * Check if we should use git cloning instead of API calls
    * Use git cloning for public repositories when no auth is provided
    */
@@ -170,55 +181,19 @@ export class RemoteFetcher {
       return false;
     }
 
-    // Check if the URL is clonable
-    const originalUrl = this.getOriginalRepoUrl();
-    if (!originalUrl) return false;
-
-    return GitCloner.isClonableUrl(originalUrl);
-  }
-
-  /**
-   * Get the original repository URL from API URL
-   */
-  private getOriginalRepoUrl(): string | null {
-    if (this.config.type === "github") {
-      // Convert API URL back to repo URL
-      // From: https://api.github.com/repos/owner/repo
-      // To: https://github.com/owner/repo
-      const match = this.config.url.match(/api\.github\.com\/repos\/(.+)/);
-      if (match) {
-        return `https://github.com/${match[1]}`;
-      }
-    } else if (this.config.type === "gitlab") {
-      // Convert API URL back to repo URL
-      // From: https://gitlab.com/api/v4/projects/owner%2Frepo
-      // To: https://gitlab.com/owner/repo
-      const match = this.config.url.match(
-        /gitlab\.com\/api\/v4\/projects\/(.+)/
-      );
-      if (match) {
-        const projectPath = decodeURIComponent(match[1]);
-        return `https://gitlab.com/${projectPath}`;
-      }
-    }
-    return null;
-  }
-  /**
+    // Check if the URL is clonable (we now store original URLs directly)
+    return GitCloner.isClonableUrl(this.config.url);
+  }  /**
    * Fetch files using git cloning
    */
   private async fetchUsingGitCloning(): Promise<RemoteFile[]> {
-    const originalUrl = this.getOriginalRepoUrl();
-    if (!originalUrl) {
-      throw new Error("Could not determine original repository URL");
-    }
-
     console.log(`🚀 Using git cloning for faster, rate-limit-free access`);
-    console.log(`📂 Cloning repository: ${originalUrl}`);
+    console.log(`📂 Cloning repository: ${this.config.url}`);
 
     try {
       const allFiles = await this.gitCloner.cloneAndExtractFiles(
-        originalUrl,
-        this.config.branch || "main",
+        this.config.url, // Use the original URL directly
+        undefined, // Let git auto-detect the default branch
         this.config.basePath || ""
       );
 
@@ -233,7 +208,7 @@ export class RemoteFetcher {
       return filteredFiles.map((file) => ({
         path: file.path,
         content: file.content,
-        url: originalUrl,
+        url: this.config.url,
         size: file.content.length,
       }));
     } catch (error) {
@@ -268,7 +243,6 @@ export class RemoteFetcher {
 
     return headers;
   }
-
   /**
    * Fetch files from GitHub repository
    */
@@ -278,9 +252,11 @@ export class RemoteFetcher {
       ...this.getAuthHeaders(),
     };
 
-    // Get repository tree
-    const treeUrl = `${this.config.url}/git/trees/${this.config.branch}?recursive=1`;
-    console.log(`🔍 Fetching GitHub repository tree from: ${this.config.url}`);
+    // Get API URL for GitHub API calls
+    const apiUrl = this.getApiUrl();
+    const branch = this.config.branch || "main"; // Fallback to main for API calls
+    const treeUrl = `${apiUrl}/git/trees/${branch}?recursive=1`;
+    console.log(`🔍 Fetching GitHub repository tree from: ${apiUrl}`);
 
     try {
       const treeResponse = await this.fetchUrl(treeUrl, headers);
@@ -357,16 +333,17 @@ export class RemoteFetcher {
       );
     }
   }
-
   /**
    * Fetch files from GitLab repository
    */
   private async fetchFromGitLab(): Promise<RemoteFile[]> {
     const headers = this.getAuthHeaders();
 
-    // Get repository tree
-    const treeUrl = `${this.config.url}/repository/tree?recursive=true&ref=${this.config.branch}`;
-    console.log(`🔍 Fetching GitLab repository tree from: ${this.config.url}`);
+    // Get API URL for GitLab API calls
+    const apiUrl = this.getApiUrl();
+    const branch = this.config.branch || "main"; // Fallback to main for API calls
+    const treeUrl = `${apiUrl}/repository/tree?recursive=true&ref=${branch}`;
+    console.log(`🔍 Fetching GitLab repository tree from: ${apiUrl}`);
 
     try {
       const treeResponse = await this.fetchUrl(treeUrl, headers);
@@ -377,15 +354,13 @@ export class RemoteFetcher {
         (item: any) => item.type === "blob" && this.shouldIncludeFile(item.path)
       );
 
-      console.log(`📁 Found ${fileItems.length} files to process`);
-
-      // Fetch file contents
+      console.log(`📁 Found ${fileItems.length} files to process`);      // Fetch file contents
       for (const item of fileItems) {
         try {
           const fileUrl = `${
-            this.config.url
+            apiUrl
           }/repository/files/${encodeURIComponent(item.path)}/raw?ref=${
-            this.config.branch
+            branch
           }`;
           const content = await this.fetchUrl(fileUrl, headers);
 
