@@ -1,20 +1,37 @@
 #!/usr/bin/env node
 
 import { Command } from "commander";
-import { ShadcnProjectRegistryGenerator } from "../core/index.js";
-import { loadConfig, createDefaultConfig } from "../config/index.js";
-import type { ShadcnProjectRegistryOptions } from "../types/index.js";
+import { confirm } from "@inquirer/prompts";
+import chalk from "chalk";
+import fs from "fs";
 
-// CLI Setup
+// Import modular components
+import { logHeader, logSuccess } from "../utils/styling.js";
+import { displayHelpSections } from "../utils/display.js";
+import { createConfigurationFile } from "../utils/config-file.js";
+import { generateRegistryWithSpinner } from "../utils/generation.js";
+import { handleError } from "../utils/error.js";
+import {
+  handleNoConfigScenario,
+  handleExistingConfigScenario,
+} from "../workflows/scenario-handlers.js";
+import { interactiveConfig } from "../workflows/interactive-config.js";
+import { runGenerate } from "../workflows/run-generate.js";
+import { createDefaultConfig } from "../config/index.js";
+import { DEFAULTS, CONFIG_FILE } from "../constants/index.js";
+
+// CLI Setup with enhanced styling
 const program = new Command();
 
 program
-  .name("shadiff")
-  .description("Generate shadcn/ui registry JSON for your project")
+  .name(chalk.cyan.bold("shadiff"))
+  .description(chalk.gray("Generate shadcn/ui registry JSON for your project"))
   .version("1.3.0");
 
+// Interactive generate command
 program
   .command("generate")
+  .alias("g")
   .description("Generate registry from project components")
   .option("-r, --root-dir <dir>", "Root directory to scan", process.cwd())
   .option(
@@ -25,99 +42,75 @@ program
   .option("-a, --author <author>", "Author information", "Project Author")
   .option(
     "--nextjs-app-strategy <strategy>",
-    "Next.js app directory handling: 'preserve' (default, targets to examples/) or 'overwrite' (original position)",
+    "Next.js app directory strategy (preserve|overwrite)",
     "preserve"
   )
-  .option(
-    "--remote-url <url>",
-    "Remote repository URL (GitHub, GitLab, or raw file URL)"
-  )
-  .option(
-    "--remote-token <token>",
-    "Authentication token for private repositories"
-  )
+  .option("-i, --interactive", "Use interactive mode with guided prompts")
+  .option("--remote-url <url>", "Remote repository URL")
+  .option("--remote-branch <branch>", "Remote repository branch", "main")
+  .option("--remote-token <token>", "Authentication token for private repos")
   .action(async (options: any) => {
-    // Validate nextjs-app-strategy option
-    const validStrategies = ["preserve", "overwrite"];
-    if (!validStrategies.includes(options.nextjsAppStrategy)) {
-      console.error(
-        `❌ Invalid nextjs-app-strategy: ${options.nextjsAppStrategy}. Must be 'preserve' or 'overwrite'.`
-      );
-      process.exit(1);
-    }
-
-    // Validate remote options
-    if (options.remoteUrl) {
-      try {
-        new URL(options.remoteUrl);
-      } catch (error) {
-        console.error(`❌ Invalid remote URL: ${options.remoteUrl}`);
-        process.exit(1);
-      }
-    } // Map CLI options to generator options
-    const generatorOptions: ShadcnProjectRegistryOptions = {
-      rootDir: options.rootDir,
-      outputFile: options.output, // Map 'output' to 'outputFile'
-      author: options.author,
-      nextjsAppStrategy: options.nextjsAppStrategy, // Add remote options if provided
-      ...(options.remoteUrl && {
-        remoteUrl: options.remoteUrl,
-        ...(options.remoteToken && {
-          remoteAuth: { token: options.remoteToken },
-        }),
-      }),
-    };
-
     try {
-      const generator = new ShadcnProjectRegistryGenerator(generatorOptions);
-      if (options.remoteUrl) {
-        console.log(
-          `🌐 Generating registry from remote source: ${options.remoteUrl}`
-        );
-        console.log(`📂 Branch: Auto-detected default branch`);
-        await generator.generateRemoteRegistry();
-      } else {
-        console.log(
-          `📁 Generating registry from local directory: ${options.rootDir}`
-        );
-        await generator.run();
-      }
-
-      console.log(`✅ Registry generated successfully: ${options.output}`);
+      await runGenerate(options, options.interactive);
     } catch (error) {
-      console.error(
-        `❌ Failed to generate registry: ${
-          error instanceof Error ? error.message : String(error)
-        }`
-      );
+      handleError(error, "Registry generation");
       process.exit(1);
     }
   });
 
+// Initialize configuration command
 program
   .command("init")
+  .alias("i")
   .description("Initialize configuration file")
-  .action(() => {
-    createDefaultConfig();
+  .option("-i, --interactive", "Use interactive mode")
+  .action(async (options: any) => {
+    if (options.interactive) {
+      logHeader("Initialize Shadiff Configuration");
+      const config = await interactiveConfig();
+
+      await createConfigurationFile(config);
+
+      const runNow = await confirm({
+        message: chalk.blue(
+          "🚀 Generate registry now with this configuration?"
+        ),
+        default: DEFAULTS.CONFIRM_PROCEED,
+      });
+
+      if (runNow) {
+        console.log(); // Add spacing
+        await generateRegistryWithSpinner(config);
+      }
+    } else {
+      createDefaultConfig();
+      logSuccess("Default configuration file created!");
+    }
   });
 
-// If no command provided, run generate with default options
+// Help command with styling
+program
+  .command("help")
+  .alias("h")
+  .description("Show detailed help")
+  .action(() => {
+    displayHelpSections();
+  });
+
+// If no command provided, show help with option to run interactively
 if (process.argv.length === 2) {
-  (async () => {
-    try {
-      const config = loadConfig();
-      const generator = new ShadcnProjectRegistryGenerator(config);
-      await generator.run();
-      console.log(`✅ Registry generated successfully: ${config.outputFile}`);
-    } catch (error) {
-      console.error(
-        `❌ Failed to generate registry: ${
-          error instanceof Error ? error.message : String(error)
-        }`
-      );
-      process.exit(1);
-    }
-  })();
+  console.log(chalk.cyan.bold("\n✨ Welcome to Shadiff!\n"));
+
+  // Check if config file exists
+  const configExists = fs.existsSync(CONFIG_FILE);
+
+  if (!configExists) {
+    // No config file - run minimal interactive setup by default
+    await handleNoConfigScenario();
+  } else {
+    // Config exists - show available commands and offer to run
+    await handleExistingConfigScenario();
+  }
 } else {
   program.parse();
 }
